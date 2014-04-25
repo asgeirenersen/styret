@@ -1,81 +1,82 @@
 <html>
-	<head>
-		<title>Saksbehandling for Hallagerbakken borettslag</title>
-		<script type="text/javascript">
-			var clientId = '807391144242.apps.googleusercontent.com';
-			var apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI';
-			var scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
-			var folderManager;
+    <head>
+        <title>Saksbehandling for Hallagerbakken borettslag</title>
+        <script type="text/javascript">
+            var clientId = '807391144242.apps.googleusercontent.com';
+            var apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI';
+            var scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
+            var folderManager;
 
-		      // Use a button to handle authentication the first time.
-		      function handleClientLoad() {
-		        gapi.client.setApiKey(apiKey);
-		        window.setTimeout(checkAuth,1);
-		      }
+            // Use a button to handle authentication the first time.
+            function handleClientLoad() {
+                gapi.client.setApiKey(apiKey);
+                window.setTimeout(checkAuth,1);
+            }
 
-		      function checkAuth() {
-		        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
-		      }
+            function checkAuth() {
+                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+            }
 
 
-		      function handleAuthResult(authResult) {
-		        var authorizeButton = document.getElementById('authorize-button');
-		        if (authResult && !authResult.error) {
-		          authorizeButton.style.visibility = 'hidden';
-		          makeApiCall();
-		        } else {
-		          authorizeButton.style.visibility = '';
-		          authorizeButton.onclick = handleAuthClick;
-		        }
-		      }
+            function handleAuthResult(authResult) {
+                var authorizeButton = document.getElementById('authorize-button');
+                if (authResult && !authResult.error) {
+                    authorizeButton.style.visibility = 'hidden';
+                    makeApiCall();
+                } else {
+                    authorizeButton.style.visibility = '';
+                    authorizeButton.onclick = handleAuthClick;
+                }
+            }
 
-		      function handleAuthClick(event) {
-		        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-		        return false;
-		      }
+            function handleAuthClick(event) {
+                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+                return false;
+            }
 
-		      // Load the API and make an API call.  Display the results on the screen.
-		      function makeApiCall() {
-		        gapi.client.load('plus', 'v1', function() {
-		          var request = gapi.client.plus.people.get({
-		            'userId': 'me'
-		          });
-		          request.execute(function(resp) {
-		            var heading = document.createElement('h4');
-		            var image = document.createElement('img');
-		            image.src = resp.image.url;
-		            heading.appendChild(image);
-		            heading.appendChild(document.createTextNode(resp.displayName));
+            // Load the API and make an API call.  Display the results on the screen.
+            function makeApiCall() {
+                gapi.client.load('plus', 'v1', function() {
+                    var request = gapi.client.plus.people.get({
+                        'userId': 'me'
+                    });
+                    request.execute(function(resp) {
+                        var heading = document.createElement('h4');
+                        var image = document.createElement('img');
+                        image.src = resp.image.url;
+                        heading.appendChild(image);
+                        heading.appendChild(document.createTextNode(resp.displayName));
 
-		            document.getElementById('content').appendChild(heading);
-		          });
-		        });
-		      }
+                        document.getElementById('content').appendChild(heading);
+                    });
+                });
+            }
 
-		      function getFolderManager (gapi) {
-		      	if (!folderManager) {
-		      		folderManager = new FolderManager(gapi);
-		      	}
-		      	return folderManager;
-		      }
 
-		      function getFileInfo () {
-		      	var fileId = document.getElementById('fileid').value;
-		      	getFolderManager(gapi).getById(fileId);
-		      }
-		</script>
-		<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
-		<script src="js/model/google/folder/FolderManager.js"></script>
+            function getFolderManager (gapi) {
+                if (!folderManager) {
+                    folderManager = new FolderManager(gapi);
+                }
+                return folderManager;
+            }
 
-	</head>
-	<body>
-		<button id="authorize-button" style="visibility: hidden">Authorize</button>
-	    <div id="content"></div>
-	    <form>
-	    	<label for="fileid">File ID</label>
-	    	<input id="fileid" type="text">
-	    	<input type="button" onClick="getFileInfo();" value="Get file info">
-	    </form>
-	    <p>Retrieves your profile name using the Google Plus API.</p>
-	</body>
+            function getFileInfo () {
+                var fileId = document.getElementById('fileid').value;
+                getFolderManager(gapi).getById(fileId);
+            }
+        </script>
+        <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+        <script src="js/model/google/folder/FolderManager.js"></script>
+
+    </head>
+    <body>
+        <button id="authorize-button" style="visibility: hidden">Authorize</button>
+        <div id="content"></div>
+        <form>
+            <label for="fileid">File ID</label>
+            <input id="fileid" type="text">
+            <input type="button" onClick="getFileInfo();" value="Get file info">
+        </form>
+        <p>Retrieves your profile name using the Google Plus API.</p>
+    </body>
 </html>
