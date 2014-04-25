@@ -4,7 +4,8 @@
 		<script type="text/javascript">
 			var clientId = '807391144242.apps.googleusercontent.com';
 			var apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI';
-			var scopes = 'https://www.googleapis.com/auth/plus.me';
+			var scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
+			var folderManager;
 
 		      // Use a button to handle authentication the first time.
 		      function handleClientLoad() {
@@ -50,13 +51,31 @@
 		          });
 		        });
 		      }
+
+		      function getFolderManager (gapi) {
+		      	if (!folderManager) {
+		      		folderManager = new FolderManager(gapi);
+		      	}
+		      	return folderManager;
+		      }
+
+		      function getFileInfo () {
+		      	var fileId = document.getElementById('fileid').value;
+		      	getFolderManager(gapi).getById(fileId);
+		      }
 		</script>
 		<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+		<script src="js/model/google/folder/FolderManager.js"></script>
 
 	</head>
 	<body>
 		<button id="authorize-button" style="visibility: hidden">Authorize</button>
 	    <div id="content"></div>
+	    <form>
+	    	<label for="fileid">File ID</label>
+	    	<input id="fileid" type="text">
+	    	<input type="button" onClick="getFileInfo();" value="Get file info">
+	    </form>
 	    <p>Retrieves your profile name using the Google Plus API.</p>
 	</body>
 </html>
