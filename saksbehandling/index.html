@@ -3,15 +3,17 @@
         <title>Saksbehandling for Hallagerbakken borettslag</title>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
         <script type="text/javascript">
-            var clientId = '807391144242.apps.googleusercontent.com';
-            var apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI';
-            var scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
-            var folderManager;
+            var clientId = '807391144242.apps.googleusercontent.com',
+                apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI',
+                scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive',
+                folderManager;
 
             // Use a button to handle authentication the first time.
             function handleClientLoad() {
                 gapi.client.setApiKey(apiKey);
-                window.setTimeout(checkAuth,1);
+                this.gapi.client.load('drive', 'v2', function () {
+                    window.setTimeout(checkAuth,1);
+                });
             }
 
             function checkAuth() {
@@ -62,8 +64,24 @@
             }
 
             function getFileInfo () {
-                var fileId = document.getElementById('fileid').value;
-                getFolderManager(gapi).getById(fileId);
+                var fileId = document.getElementById('fileid').value,
+                    folderManager = getFolderManager(gapi),
+                    deferred;
+                
+                deferred=folderManager.getById(fileId);
+                deferred.done(function (resp) {
+                    var output = $('#output'),
+                        dl;
+                    output.empty();
+                    output.append('<dl></dl>');
+                    dl = $('dl', output);
+                    dl.append('<dt>Title</dt>');
+                    dl.append('<dd>' + resp.title + '</dd>');
+                    dl.append('<dt>Description</dt>');
+                    dl.append('<dd>' + resp.description + '</dd>');
+                    dl.append('<dt>MIME type</dt>');
+                    dl.append('<dd>' + resp.mimeType + '</dd>');
+                });
             }
         </script>
         <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
@@ -79,5 +97,6 @@
             <input type="button" onClick="getFileInfo();" value="Get file info">
         </form>
         <p>Retrieves your profile name using the Google Plus API.</p>
+        <div id="output"></div>
     </body>
 </html>

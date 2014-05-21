@@ -1,27 +1,26 @@
-
+/*global $*/
 /**
 * @param {Object} gapi Instance of Google API client
 */
 FolderManager = function (gapi) {
-    var _this = this;
-    this.ready = false;
     this.gapi = gapi;
-    this.gapi.client.load('drive', 'v2', function () {
-        _this.ready = true;
-    });
 }
 
+/**
+ * 
+ * @param {string} id
+ * @returns {Deferred}
+ */
 FolderManager.prototype.getById = function (id) {
-    if (!this.ready) {
-        alert("Not so fast!");
-        return;
-    }
-    var request = this.gapi.client.drive.files.get({
+    var deferred = $.Deferred();
+        request = this.gapi.client.drive.files.get({
     'fileId': id
     });
     request.execute(function(resp) {
         console.log('Title: ' + resp.title);
         console.log('Description: ' + resp.description);
         console.log('MIME type: ' + resp.mimeType);
+        deferred.resolve(resp);
     });
+    return deferred;
 }
