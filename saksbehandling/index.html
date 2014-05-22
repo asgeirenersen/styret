@@ -37,6 +37,7 @@
                 if (authResult && !authResult.error) {
                     authorizeButton.style.visibility = 'hidden';
                     makeApiCall();
+                    startApp();
                 } else {
                     authorizeButton.style.visibility = '';
                     authorizeButton.onclick = handleAuthClick;
@@ -65,18 +66,11 @@
                     });
                 });
             }
-
-
-            function getFolderManager (gapi) {
-                if (!folderManager) {
-                    folderManager = new FolderManager(gapi);
-                }
-                return folderManager;
-            }
             
             function startApp () {
                 require(['app'], function (App) {
-                    var app = new App(appConfig, gapi);
+                    var appContainer = $('#appContainer');
+                    var app = new App(appConfig, gapi, appContainer);
                     require(['domReady'], function (domReady) {
                         domReady(function () {
                             app.start();
@@ -91,12 +85,6 @@
     <body>
         <button id="authorize-button" style="visibility: hidden">Authorize</button>
         <div id="content"></div>
-        <form>
-            <label for="fileid">File ID</label>
-            <input id="fileid" type="text">
-            <input type="button" onClick="startApp();" value="Start the app!">
-        </form>
-        <p>Retrieves your profile name using the Google Plus API.</p>
-        <div id="output"></div>
+        <div id="appContainer"></div>
     </body>
 </html>
