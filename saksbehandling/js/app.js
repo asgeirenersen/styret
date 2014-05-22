@@ -1,10 +1,13 @@
 /* global require, define */
 define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager, $) {
-    var gapi;
     
-    var App = function (config, localGapi) {
+    var App = function (config, gapi, appContainer) {
+        this.gapi = gapi;
         this.config = config;
-        gapi = localGapi;
+        this.id = 'App_' + time();
+        this.rootElement = $('<div></div>');
+        this.rootElement.attr('id', this.id);
+        appContainer.append(this.rootElement);
     };
     
     App.prototype.start = function () {
@@ -24,6 +27,10 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
             dl.append('<dt>MIME type</dt>');
             dl.append('<dd>' + resp.mimeType + '</dd>');
         });
+    };
+    
+    App.prototype.getRootElement = function () {
+        return this.rootElement;
     };
     
     return App;
