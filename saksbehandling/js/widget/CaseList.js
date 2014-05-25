@@ -17,7 +17,8 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         var _this = this;
         this.rootElement = $('<div></div>');
         this.rootElement.attr('id', this.id);
-        this.parentApp.getRootElement().append(this.buildUI());
+        this.rootElement.append(this.buildUI());
+        this.parentApp.getRootElement().append(this.rootElement);
         $('input[name="getCases"]', this.rootElement).on('click', function (e) {
             var id = $('input[name="fileId"]', _this.rootElement).val();
             _this.listCases(id);
