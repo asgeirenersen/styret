@@ -30,7 +30,7 @@ define(['jquery'], function($) {
     FolderManager.prototype.getFoldersByParentId = function (id) {
         var deferred = $.Deferred();
             request = this.gapi.client.drive.files.list({
-                q: 'mimeType="application/vnd.google-apps.folder" and "' + id + '" in parents'
+                q: '(mimeType="application/vnd.google-apps.folder") and ("' + id + '" in parents) and (trashed != true)'
             });
         request.execute(function(resp) {
             console.debug(resp);
@@ -40,7 +40,7 @@ define(['jquery'], function($) {
     }
     
     FolderManager.prototype.addParent = function (id, parentId) {
-        var deferred = $.Deferred();
+        var deferred = $.Deferred(),
             request = this.gapi.client.drive.parents.insert({
                 fileId: id,
                 resource: {
@@ -55,8 +55,8 @@ define(['jquery'], function($) {
     }
 
     FolderManager.prototype.removeParent = function (id, parentId) {
-        var deferred = $.Deferred();
-            request = this.gapi.client.drive.parents.insert({
+        var deferred = $.Deferred(),
+            request = this.gapi.client.drive.parents.delete({
                 parentId: parentId,
                 fileId: id
             });

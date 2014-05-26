@@ -28,9 +28,9 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.listCases(this.config.openCasesFolder);
     };
     
-    CaseList.prototype.listCases = function (id) {
+    CaseList.prototype.listCases = function (parentFolderId) {
         var _this = this,
-            deferred = this.folderManager.getFoldersByParentId(id);
+            deferred = this.folderManager.getFoldersByParentId(parentFolderId);
         
         deferred.done(function (resp) {
             var output = $('.listWrapper', _this.rootElement),
@@ -38,9 +38,60 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
                 list = $('<ul></ul>');
             output.empty();
             for (var i = 0; i < items.length; i = i +1) {
-                list.append('<li>' + items[i]['title'] + '</li>');
+                var closeLink = $('<a class="closeBtn" data-id="' + items[i]['id'] + '" href="#">&nbsp;(Lukk)</a>'),
+                    li = $('<li></li>');
+
+                li.append('<span class="caseTitle">' + items[i]['title'] + '</span>');
+                li.append(closeLink);
+                list.append(li);
             }
             output.append(list);
+            $('.closeBtn', output).on('click', null, function (e) {
+                var clickedElement = $(e.target),
+                    id = clickedElement.attr('data-id'),
+                    title = clickedElement.prev('span').text(),
+                    confirmTxt = 'Vil du lukke denne saken?\n' + title;
+
+                e.preventDefault();
+                if (confirm(confirmTxt)) {
+                    var whenAdded,
+                        whenRemoved,
+                        whenAll = $.Deferred(),
+                        reportDone;
+                        
+                    reportDone = function () {
+                        if (whenAdded.state() === 'resolved' && 
+                                whenRemoved.state() === 'resolved') {
+                            whenAll.resolve();
+                        }
+                    }
+                        
+                    whenAll.done(function () {
+                        _this.listCases(parentFolderId);
+                    });
+
+                    whenAdded = _this.folderManager.addParent(id, _this.config.closedCasesFolder);
+                    whenAdded.done(function (resp) {
+                        if (resp['error']) {
+                            alert('Kunne ikke legge saken inn i mappen 02 Lukkede saker.');
+                        } else {
+                            console.log('Saken er lagt til i mappen 02 Lukkede saker.');
+                        }
+                        reportDone(whenAdded);
+                    });
+                    whenRemoved = _this.folderManager.removeParent(id, _this.config.openCasesFolder);
+                    whenRemoved.done(function (resp) {
+                        if (resp['error']) {
+                            alert('Saken kunne ikke fjernes fra mappen 01 Åpne saker.');
+                        } else {
+                            console.log('Saken er fjernet fra mappen 01 Åpne saker.');
+                        }
+                        reportDone(whenRemoved);
+                    });
+                    
+                }
+
+            });
         });
     };
     
@@ -61,10 +112,7 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
     
     CaseList.prototype.buildUI = function () {
         var html = $('<form>' +
-                '<label value="Case ID">' +
-                '<input name="fileid" type="text">' +
-                '</label>' +
-                '<input name="getCases" type="button" value="Get cases">' +
+                '<input name="getCases" type="button" value="Vis saker">' +
                 '<div class="listWrapper"></div>' +
             '</form>');
         return html;
