@@ -8,13 +8,26 @@
                 apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI',
                 scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive',
                 folderManager,
-                appConfig = {
-                    rootFolder: '',
-                    casesFolder: '0B35WKpVh3VCkZWJlNjYyMTEtNzE3NC00NzFiLWI2YWEtNTdjNzdkZmNiZGRi',
-                    openCasesFolder: '0B35WKpVh3VCkSlVUQnQ0dUtqN28',
-                    closedCasesFolder: '0B35WKpVh3VCkMmFSTG81TU1zMEk',
-                    possibleCasesFolder: '0B35WKpVh3VCkYlpCQXN4RlFwUU0'
-                };
+                env = 'dev',
+                appConfig = {};
+ 
+            // Live
+            appConfig['live'] = {
+                rootFolder: '0B35WKpVh3VCkZWIyZWYzNzktMzE1OS00NTdlLThiN2ItZTU2ODFhZDRjNTg2',
+                casesFolder: '0B35WKpVh3VCkZWJlNjYyMTEtNzE3NC00NzFiLWI2YWEtNTdjNzdkZmNiZGRi',
+                openCasesFolder: '0B35WKpVh3VCkSlVUQnQ0dUtqN28',
+                closedCasesFolder: '0B35WKpVh3VCkMmFSTG81TU1zMEk',
+                possibleCasesFolder: '0B35WKpVh3VCkYlpCQXN4RlFwUU0'
+            };
+            
+            // Live
+            appConfig['dev'] = {
+                rootFolder: '0B35WKpVh3VCkUDVqWl9LQW1qWkk',
+                casesFolder: '0B35WKpVh3VCkMDNWaWRyOEpWNkk',
+                openCasesFolder: '0B35WKpVh3VCkc2dxRmNwN0VaMkU',
+                closedCasesFolder: '0B35WKpVh3VCkVkRROGZwRUpKaWM',
+                possibleCasesFolder: '0B35WKpVh3VCkd0dPVTlxRWRoZ0U'
+            };
 
             require.config({
                 baseUrl: 'js',
@@ -70,8 +83,11 @@
             
             function startApp () {
                 require(['app'], function (App) {
-                    var appContainer = $('#appContainer');
-                    var app = new App(appConfig, gapi, appContainer);
+                    var appContainer = $('#appContainer'),
+                        config = appConfig[env],
+                        app;
+                    
+                    app = new App(config, gapi, appContainer);
                     require(['domReady'], function (domReady) {
                         domReady(function () {
                             app.start();
