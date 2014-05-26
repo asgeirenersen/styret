@@ -27,16 +27,13 @@ define(['jquery'], function($) {
         return deferred;
     }
 
-    FolderManager.prototype.getChildFoldersById = function (id) {
+    FolderManager.prototype.getFoldersByParentId = function (id) {
         var deferred = $.Deferred();
-            request = this.gapi.client.drive.files.get({
-                'fileId': id,
-                'q': 'mimeType=application/vnd.google-apps.folder'
+            request = this.gapi.client.drive.files.list({
+                q: 'mimeType="application/vnd.google-apps.folder" and "' + id + '" in parents'
             });
         request.execute(function(resp) {
-            console.log('Title: ' + resp.title);
-            console.log('Description: ' + resp.description);
-            console.log('MIME type: ' + resp.mimeType);
+            console.debug(resp);
             deferred.resolve(resp);
         });
         return deferred;    

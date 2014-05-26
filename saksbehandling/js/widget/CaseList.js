@@ -19,28 +19,28 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.rootElement.attr('id', this.id);
         this.rootElement.append(this.buildUI());
         this.parentApp.getRootElement().append(this.rootElement);
-        $('input[name="getCases"]', this.rootElement).on('click', function (e) {
-            var id = $('input[name="fileId"]', _this.rootElement).val();
-            _this.listCases(id);
+        $('input[name="getCases"]', this.rootElement).on('click', function () {
+            _this.listOpenCases();
         });
+    };
+    
+    CaseList.prototype.listOpenCases = function () {
+        this.listCases(this.config.openCasesFolder);
     };
     
     CaseList.prototype.listCases = function (id) {
         var _this = this,
-            deferred = this.folderManager.getById(this.config.openCasesFolder);
+            deferred = this.folderManager.getFoldersByParentId(id);
         
         deferred.done(function (resp) {
             var output = $('.listWrapper', _this.rootElement),
-                dl;
+                items = resp['items'],
+                list = $('<ul></ul>');
             output.empty();
-            output.append('<dl></dl>');
-            dl = $('dl', output);
-            dl.append('<dt>Title</dt>');
-            dl.append('<dd>' + resp.title + '</dd>');
-            dl.append('<dt>Description</dt>');
-            dl.append('<dd>' + resp.description + '</dd>');
-            dl.append('<dt>MIME type</dt>');
-            dl.append('<dd>' + resp.mimeType + '</dd>');
+            for (var i = 0; i < items.length; i = i +1) {
+                list.append('<li>' + items[i]['title'] + '</li>');
+            }
+            output.append(list);
         });
     };
     
