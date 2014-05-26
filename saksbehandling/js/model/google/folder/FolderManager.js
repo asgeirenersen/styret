@@ -39,6 +39,35 @@ define(['jquery'], function($) {
         return deferred;    
     }
     
+    FolderManager.prototype.addParent = function (id, parentId) {
+        var deferred = $.Deferred();
+            request = this.gapi.client.drive.parents.insert({
+                fileId: id,
+                resource: {
+                    id: parentId
+                }
+            });
+        request.execute(function(resp) {
+            console.debug(resp);
+            deferred.resolve(resp);
+        });
+        return deferred;  
+    }
+
+    FolderManager.prototype.removeParent = function (id, parentId) {
+        var deferred = $.Deferred();
+            request = this.gapi.client.drive.parents.insert({
+                parentId: parentId,
+                fileId: id
+            });
+        request.execute(function(resp) {
+            console.debug(resp);
+            deferred.resolve(resp);
+        });
+        return deferred;  
+    }
+
+
     return FolderManager;
 });
 

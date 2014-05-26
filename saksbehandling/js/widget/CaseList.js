@@ -44,6 +44,21 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         });
     };
     
+    CaseList.prototype.closeCase = function (id) {
+        var _this = this,
+            deferred1,
+            deferred2;
+            
+        deferred1 = this.folderManager.addParent(id, this.config.closedCasesFolder);
+        deferred1.done(function () {
+            deferred2 = _this.folderManager.removeParent(id, _this.config.openCasesFolder);
+            deferred2.done(function (resp) {
+                console.debug(resp);
+                _this.listCases();
+            });
+        });
+    }
+    
     CaseList.prototype.buildUI = function () {
         var html = $('<form>' +
                 '<label value="Case ID">' +
