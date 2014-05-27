@@ -77,22 +77,22 @@
             }
 
             // Load the API and make an API call.  Display the results on the screen.
-            function makeApiCall() {
-                gapi.client.load('plus', 'v1', function() {
-                    var request = gapi.client.plus.people.get({
-                        'userId': 'me'
-                    });
-                    request.execute(function(resp) {
-                        var heading = document.createElement('h4');
-                        var image = document.createElement('img');
-                        image.src = resp.image.url;
-                        heading.appendChild(image);
-                        heading.appendChild(document.createTextNode(resp.displayName));
-
-                        document.getElementById('content').appendChild(heading);
-                    });
-                });
-            }
+//            function makeApiCall() {
+//                gapi.client.load('plus', 'v1', function() {
+//                    var request = gapi.client.plus.people.get({
+//                        'userId': 'me'
+//                    });
+//                    request.execute(function(resp) {
+//                        var heading = document.createElement('h4');
+//                        var image = document.createElement('img');
+//                        image.src = resp.image.url;
+//                        heading.appendChild(image);
+//                        heading.appendChild(document.createTextNode(resp.displayName));
+//
+//                        document.getElementById('content').appendChild(heading);
+//                    });
+//                });
+//            }
             
             function startApp () {
                 require(['app'], function (App) {
