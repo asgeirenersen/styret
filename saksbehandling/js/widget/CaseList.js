@@ -135,11 +135,11 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
     CaseList.prototype.buildUI = function () {
         var rootElement = $('<div></div>'),
             html = $(
-                '<p>' +
-                    '<button name="getOpenCases" class="btn btn-sm btn-primary" type="button">Åpne saker</button>' +
-                    '<button name="getClosedCases" class="btn btn-sm btn-success" type="button">Lukkede saker</button>' +
-                    '<button name="getPossibleCases" class="btn btn-sm btn-warning" type="button">Kanskjesaker</button>' +
-                '</p>' +
+                '<p>\n' +
+                    '<button name="getOpenCases" class="btn btn-sm btn-primary" type="button">Åpne saker</button>\n' +
+                    '<button name="getClosedCases" class="btn btn-sm btn-success" type="button">Lukkede saker</button>\n' +
+                    '<button name="getPossibleCases" class="btn btn-sm btn-warning" type="button">Kanskjesaker</button>\n' +
+                '</p>\n' +
                 '<div class="listWrapper"></div>');
 
         rootElement.attr('id', this.id);
