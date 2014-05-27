@@ -11,21 +11,43 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.config = config;
         this.id = 'CaseList_' + new Date().getTime();
         this.folderManager = new FolderManager(gapi);
+        this.rootElement;
     };
     
     CaseList.prototype.init = function () {
         var _this = this;
-        this.rootElement = $('<div></div>');
-        this.rootElement.attr('id', this.id);
-        this.rootElement.append(this.buildUI());
+
+        this.rootElement = this.buildUI();
         this.parentApp.getRootElement().append(this.rootElement);
-        $('button[name="getCases"]', this.rootElement).on('click', function () {
+        $('button[name="getOpenCases"]', this.rootElement).on('click', function () {
             _this.listOpenCases();
+        });
+        $('button[name="getClosedCases"]', this.rootElement).on('click', function () {
+            _this.listClosedCases();
+        });
+        $('button[name="getPossibleCases"]', this.rootElement).on('click', function () {
+            _this.listPossibleCases();
         });
     };
     
+    CaseList.prototype.show = function () {
+        this.rootElement.css('display', 'block');
+    };
+    
+    CaseList.prototype.hide = function () {
+        this.rootElement.css('display', 'none');
+    }
+    
     CaseList.prototype.listOpenCases = function () {
         this.listCases(this.config.openCasesFolder);
+    };
+    
+    CaseList.prototype.listClosedCases = function () {
+        this.listCases(this.config.closedCasesFolder);
+    };
+    
+    CaseList.prototype.listPossibleCases = function () {
+        this.listCases(this.config.possibleCasesFolder);
     };
     
     CaseList.prototype.listCases = function (parentFolderId) {
@@ -111,11 +133,19 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
     }
     
     CaseList.prototype.buildUI = function () {
-        var html = $('<form>' +
-                '<button name="getCases" class="btn btn-lg btn-default" type="button">Vis saker</button>' +
-                '<div class="listWrapper"></div>' +
-            '</form>');
-        return html;
+        var rootElement = $('<div></div>'),
+            html = $(
+                '<p>' +
+                    '<button name="getOpenCases" class="btn btn-sm btn-primary" type="button">Åpne saker</button>' +
+                    '<button name="getClosedCases" class="btn btn-sm btn-success" type="button">Lukkede saker</button>' +
+                    '<button name="getPossibleCases" class="btn btn-sm btn-warning" type="button">Kanskjesaker</button>' +
+                '</p>' +
+                '<div class="listWrapper"></div>');
+
+        rootElement.attr('id', this.id);
+        rootElement.append(html);
+
+        return rootElement;
     };
 
     return CaseList;
