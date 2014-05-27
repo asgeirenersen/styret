@@ -1,8 +1,21 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>Saksbehandling for Hallagerbakken borettslag</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
         <script src="js/require.js"></script>
+        <script src="js/jquery.js"></script>
+        
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        
         <script type="text/javascript">
             var clientId = '807391144242.apps.googleusercontent.com',
                 apiKey = 'AIzaSyAGjFjXfH8XPdn6AJgKE7VfaKrvcyz1ztI',
@@ -99,10 +112,12 @@
         <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 
     </head>
-    <body>
+    <body role="document">
+        <div role="main">
         <h1>Hallagerbakken boretslag - verktøykasse</h1>
-        <button id="authorize-button" style="visibility: hidden">Logg inn</button>
+        <button type="button" id="authorize-button" class="btn btn-lg btn-default" style="visibility: hidden">Logg inn</button>
         <div id="content"></div>
         <div id="appContainer"></div>
+        </div>
     </body>
 </html>

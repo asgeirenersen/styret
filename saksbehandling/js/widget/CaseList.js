@@ -19,7 +19,7 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.rootElement.attr('id', this.id);
         this.rootElement.append(this.buildUI());
         this.parentApp.getRootElement().append(this.rootElement);
-        $('input[name="getCases"]', this.rootElement).on('click', function () {
+        $('button[name="getCases"]', this.rootElement).on('click', function () {
             _this.listOpenCases();
         });
     };
@@ -112,7 +112,7 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
     
     CaseList.prototype.buildUI = function () {
         var html = $('<form>' +
-                '<input name="getCases" type="button" value="Vis saker">' +
+                '<button name="getCases" class="btn btn-lg btn-default" type="button">Vis saker</button>' +
                 '<div class="listWrapper"></div>' +
             '</form>');
         return html;
