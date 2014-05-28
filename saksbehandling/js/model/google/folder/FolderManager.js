@@ -1,16 +1,16 @@
 /* global require, define */
 define(['jquery'], function($) {
-    
+
     /**
-    * @param {Object} gapi Instance of Google API client
-    */
+     * @param {Object} gapi Instance of Google API client
+     */
     FolderManager = function (gapi) {
         this.gapi = gapi;
     }
 
     /**
-     * 
-     * @param {string} id
+     *
+     * @param {string} id ID of the folder
      * @returns {Deferred}
      */
     FolderManager.prototype.getById = function (id) {
@@ -27,6 +27,10 @@ define(['jquery'], function($) {
         return deferred;
     }
 
+    /**
+     * @param {string} id ID of parent folder
+     * @returns {Deferred}
+     */
     FolderManager.prototype.getFoldersByParentId = function (id) {
         var deferred = $.Deferred();
             request = this.gapi.client.drive.files.list({
@@ -36,9 +40,14 @@ define(['jquery'], function($) {
             console.debug(resp);
             deferred.resolve(resp);
         });
-        return deferred;    
+        return deferred;
     }
-    
+
+    /**
+     * @param {string} id ID of the folder that needs a parent
+     * @param {string} parentId ID of the new parent folder
+     * @returns {Deferred}
+     */
     FolderManager.prototype.addParent = function (id, parentId) {
         var deferred = $.Deferred(),
             request = this.gapi.client.drive.parents.insert({
@@ -51,9 +60,14 @@ define(['jquery'], function($) {
             console.debug(resp);
             deferred.resolve(resp);
         });
-        return deferred;  
+        return deferred;
     }
 
+    /**
+     * @param {string} id ID of the folder that looses a parent
+     * @param {string} parentId ID of the former parent folder
+     * @returns {Deferred}
+     */
     FolderManager.prototype.removeParent = function (id, parentId) {
         var deferred = $.Deferred(),
             request = this.gapi.client.drive.parents.delete({
@@ -64,7 +78,7 @@ define(['jquery'], function($) {
             console.debug(resp);
             deferred.resolve(resp);
         });
-        return deferred;  
+        return deferred;
     }
 
 

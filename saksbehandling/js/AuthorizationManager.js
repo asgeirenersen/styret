@@ -1,18 +1,16 @@
 /* global gapi */
 define([
-    'jquery',
-    'https://apis.google.com/js/client.js'
+    'jquery'
 ], function ($) {
 
-    var AuthorisationManager = function (apiKey, clientId) {
+    var AuthorizationManager = function (gapi, clientId) {
         this.clientId = clientId;
-
-        gapi.client.setApiKey(apiKey);
+        this.gapi = gapi;
     };
 
-    AuthorisationManager.prototype.authorise = function (scopes) {
+    AuthorizationManager.prototype.authorize = function (scopes, immediate) {
         var deferred = $.Deferred();
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, function (authResult) {
+        this.gapi.auth.authorize({client_id: this.clientId, scope: scopes, immediate: immediate}, function (authResult) {
             var retVal = false;
             if (authResult && !authResult.error) {
                 retVal = true;
@@ -22,5 +20,7 @@ define([
 
         return deferred;
     }
+    
+    return AuthorizationManager;
     
 });

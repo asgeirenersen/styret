@@ -33,7 +33,7 @@
                 possibleCasesFolder: '0B35WKpVh3VCkYlpCQXN4RlFwUU0'
             };
             
-            // Live
+            // Dev
             appConfig['dev'] = {
                 rootFolder: '0B35WKpVh3VCkUDVqWl9LQW1qWkk',
                 casesFolder: '0B35WKpVh3VCkMDNWaWRyOEpWNkk',
@@ -45,36 +45,47 @@
             require.config({
                 baseUrl: 'js',
             });
+//            
+//            require(['AuthorizationManager'], function (AuthorizationManager) {
+//                var am = new AuthorizationManager(apiKey, clientId),
+//                    deferred;
+//                
+//                deferred = am.authorize(scopes);
+//                deferred.done(function (authorized) {
+//                    console.log("Authorized: " + authorized);
+//                    startApp();
+//                });        
+//            });
 
             // Use a button to handle authentication the first time.
             function handleClientLoad() {
                 gapi.client.setApiKey(apiKey);
                 this.gapi.client.load('drive', 'v2', function () {
-                    window.setTimeout(checkAuth,1);
+                    window.setTimeout(startApp, 1);
                 });
             }
 
-            function checkAuth() {
-                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
-            }
-
-
-            function handleAuthResult(authResult) {
-                var authorizeButton = document.getElementById('authorize-button');
-                if (authResult && !authResult.error) {
-                    authorizeButton.style.visibility = 'hidden';
-                    makeApiCall();
-                    startApp();
-                } else {
-                    authorizeButton.style.visibility = '';
-                    authorizeButton.onclick = handleAuthClick;
-                }
-            }
-
-            function handleAuthClick(event) {
-                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-                return false;
-            }
+//            function checkAuth() {
+//                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+//            }
+//
+//
+//            function handleAuthResult(authResult) {
+//                var authorizeButton = document.getElementById('authorize-button');
+//                if (authResult && !authResult.error) {
+//                    authorizeButton.style.visibility = 'hidden';
+//                    makeApiCall();
+//                    startApp();
+//                } else {
+//                    authorizeButton.style.visibility = '';
+//                    authorizeButton.onclick = handleAuthClick;
+//                }
+//            }
+//
+//            function handleAuthClick(event) {
+//                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+//                return false;
+//            }
 
             // Load the API and make an API call.  Display the results on the screen.
 //            function makeApiCall() {
@@ -99,8 +110,8 @@
                     var appContainer = $('#appContainer'),
                         config = appConfig[env],
                         app;
-                    
-                    app = new App(config, gapi, appContainer);
+
+                    app = new App(config, gapi, clientId, appContainer);
                     require(['domReady'], function (domReady) {
                         domReady(function () {
                             app.start();
@@ -115,7 +126,6 @@
     <body role="document">
         <div class="container" role="main">
         <h1>Hallagerbakken boretslag - verktøykasse</h1>
-        <button type="button" id="authorize-button" class="btn btn-lg btn-default" style="visibility: hidden">Logg inn</button>
         <div id="content"></div>
         <div id="appContainer"></div>
         </div>
