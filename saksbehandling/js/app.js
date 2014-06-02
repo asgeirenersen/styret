@@ -40,6 +40,11 @@ define([
         });
     };
     
+    /**
+     * 
+     * @param {boolean} userInitiated Is the authorization triggered by a user action?
+     * @returns {Deferred}
+     */
     App.prototype.authorize = function (userInitiated) {
         var _this = this,
             result = $.Deferred(),
