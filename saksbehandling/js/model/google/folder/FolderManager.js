@@ -6,7 +6,7 @@ define(['jquery'], function($) {
      */
     FolderManager = function (gapi) {
         this.gapi = gapi;
-    }
+    };
 
     /**
      *
@@ -25,7 +25,7 @@ define(['jquery'], function($) {
             deferred.resolve(resp);
         });
         return deferred;
-    }
+    };
 
     /**
      * @param {string} id ID of parent folder
@@ -41,7 +41,7 @@ define(['jquery'], function($) {
             deferred.resolve(resp);
         });
         return deferred;
-    }
+    };
 
     /**
      * @param {string} id ID of the folder that needs a parent
@@ -61,7 +61,7 @@ define(['jquery'], function($) {
             deferred.resolve(resp);
         });
         return deferred;
-    }
+    };
 
     /**
      * @param {string} id ID of the folder that looses a parent
@@ -79,7 +79,19 @@ define(['jquery'], function($) {
             deferred.resolve(resp);
         });
         return deferred;
-    }
+    };
+    
+    FolderManager.prototype.createFolder = function (title, description, parentFolderId) {
+        var deferred = $.Deferred();
+            request = this.gapi.client.drive.files.list({
+
+            });
+        request.execute(function(resp) {
+            console.debug(resp);
+            deferred.resolve(resp);
+        });
+        return deferred;
+    };
 
 
     return FolderManager;

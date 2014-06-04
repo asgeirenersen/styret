@@ -22,6 +22,7 @@ define([
         this.id = 'App_' + new Date().getTime();
         this.rootElement = this.buildUI();
         this.wrapperElement.append(this.rootElement);
+        this.addListeners();
     };
     
     /**
@@ -126,7 +127,7 @@ define([
         menuBar = $('<div class="navbar navbar-default"></div>');
         menuBar.append('<div class="navbar-collapse collapse"><ul class="nav navbar-nav"></ul></div>');
         rootElement.append(menuBar);
-        rootElement.append('<button type="button" class="btn btn-danger authorize-button" style="visibility: hidden">Logg inn</button>');
+        rootElement.append('<button type="button" class="btn btn-danger authorize-button" style="display: none">Logg inn</button>');
         
         return rootElement;
     };
@@ -134,7 +135,7 @@ define([
     App.prototype.addListeners = function () {
         var _this = this;
 
-        $('authorize-button', this.rootElement).on('click', null, function () {
+        $('.authorize-button', this.rootElement).on('click', null, function () {
             _this.authorize(true);
         });
     };
