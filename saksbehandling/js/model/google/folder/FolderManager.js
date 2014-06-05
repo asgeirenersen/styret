@@ -83,8 +83,13 @@ define(['jquery'], function($) {
     
     FolderManager.prototype.createFolder = function (title, description, parentFolderId) {
         var deferred = $.Deferred();
-            request = this.gapi.client.drive.files.list({
-
+            request = this.gapi.client.drive.files.insert({
+                resource: {
+                    title: title,
+                    parents: [{id: parentFolderId}],
+                    mimeType: 'application/vnd.google-apps.folder',
+                    description: description
+                }
             });
         request.execute(function(resp) {
             console.debug(resp);
@@ -93,7 +98,5 @@ define(['jquery'], function($) {
         return deferred;
     };
 
-
     return FolderManager;
 });
-

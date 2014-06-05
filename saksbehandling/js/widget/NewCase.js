@@ -21,8 +21,27 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.parentApp.getRootElement().append(this.rootElement);
         
         $('button', this.rootElement).on('click', function () {
-            
+            _this.createCase();
         });
+    };
+
+    NewCase.prototype.show = function () {
+        this.rootElement.css('display', 'block');
+    };
+    
+    NewCase.prototype.hide = function () {
+        this.rootElement.css('display', 'none');
+    };
+    
+    NewCase.prototype.createCase = function () {
+        var deferred;
+        deferred = this.folderManager.createFolder(
+                $('input[name="title"]', this.rootElement).val(),
+                $('input[name="description"]', this.rootElement).val(),
+                this.config.openCasesFolder
+        );
+
+        return deferred;
     };
     
     NewCase.prototype.buildUI = function () {
@@ -44,4 +63,6 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         
         return rootElement;
     };
+    
+    return NewCase;
 });

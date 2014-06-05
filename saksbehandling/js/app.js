@@ -2,8 +2,9 @@
 define([
     'AuthorizationManager',
     'widget/CaseList',
+    'widget/NewCase',
     'jquery'
-], function (AuthorizationManager, CaseList, $) {
+], function (AuthorizationManager, CaseList, NewCase, $) {
     
     /**
      * @param {object} config
@@ -33,11 +34,7 @@ define([
             deferred = this.authorize(false);
         
         deferred.done(function () {
-            console.log('Auth success!');
             _this.addWidgets();
-        });
-        deferred.fail(function () {
-            console.log('Auth failed!');
         });
     };
     
@@ -48,9 +45,11 @@ define([
         
         deferred.done(function (loggedIn) {
             if (!loggedIn) {
+                console.log('Auth failed!');
                 _this.showLogin();
                 result.reject(false);
             } else {
+                console.log('Auth success!');
                 _this.hideLogin();
                 result.resolve(true);
             }
@@ -73,8 +72,13 @@ define([
     App.prototype.addWidgets = function () {
         var caseList = new CaseList(this.gapi, this, this.config);
         caseList.init();
-        
         this.addWidget(caseList, 'Saksliste');
+        
+        
+        var newCase = new NewCase(this.gapi, this, this.config);
+        newCase.init();
+        this.addWidget(newCase, 'Ny sak');
+        
         this.switchToWidget(caseList);  
     };
     
@@ -136,7 +140,9 @@ define([
         var _this = this;
 
         $('.authorize-button', this.rootElement).on('click', null, function () {
-            _this.authorize(true);
+            _this.authorize(true).done(function () {
+                _this.addWidgets();
+            });
         });
     };
     
