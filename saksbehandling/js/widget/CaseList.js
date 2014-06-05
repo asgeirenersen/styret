@@ -36,7 +36,7 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
     
     CaseList.prototype.hide = function () {
         this.rootElement.css('display', 'none');
-    }
+    };
     
     CaseList.prototype.listOpenCases = function () {
         var _this = this,

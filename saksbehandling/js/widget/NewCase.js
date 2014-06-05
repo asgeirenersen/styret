@@ -1,5 +1,9 @@
 
-define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager, $) {
+define([
+    'model/google/folder/FolderManager',
+    'model/core/case/CaseManager',
+    'jquery'
+], function (FolderManager, CaseManager, $) {
     var instance = null;
 
     var NewCase = function (gapi, app, config) {
@@ -11,6 +15,7 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.config = config;
         this.id = 'NewCase' + new Date().getTime();
         this.folderManager = new FolderManager(gapi);
+        this.caseManager = new CaseManager(this.config, this.folderManager);
         this.rootElement;
     };
     
@@ -35,10 +40,10 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
     
     NewCase.prototype.createCase = function () {
         var deferred;
-        deferred = this.folderManager.createFolder(
+        deferred = this.caseManager.createFolder(
                 $('input[name="title"]', this.rootElement).val(),
                 $('input[name="description"]', this.rootElement).val(),
-                this.config.openCasesFolder
+                this.caseManager.statusOpen
         );
 
         return deferred;
