@@ -14,7 +14,7 @@ define(['jquery'], function($) {
      * @returns {Deferred}
      */
     FolderManager.prototype.getById = function (id) {
-        var deferred = $.Deferred();
+        var deferred = $.Deferred(),
             request = this.gapi.client.drive.files.get({
         'fileId': id
         });
@@ -32,13 +32,40 @@ define(['jquery'], function($) {
      * @returns {Deferred}
      */
     FolderManager.prototype.getFoldersByParentId = function (id) {
-        var deferred = $.Deferred();
-            request = this.gapi.client.drive.files.list({
-                q: '(mimeType="application/vnd.google-apps.folder") and ("' + id + '" in parents) and (trashed != true)'
-            });
+        var deferred = $.Deferred(),
+            request;
+
+        request = this.gapi.client.drive.files.list({
+            q: '(mimeType="application/vnd.google-apps.folder") and ("' + id + '" in parents) and (trashed != true)'
+        });
         request.execute(function(resp) {
             console.debug(resp);
-            deferred.resolve(resp);
+            deferred.resolve(resp['items']);
+        });
+        return deferred;
+    };
+
+    /**
+     * @param {string} ids Array of IDs of parent folders
+     * @returns {Deferred}
+     */
+    FolderManager.prototype.getFoldersByParentIds = function (ids) {
+        var deferred = $.Deferred(),
+            parentString,
+            request,
+            i = 1;
+        
+        parentString += '"' + ids[0] + '" in parents';
+        for (i; i < ids.length; i += 1) {
+            parentString += ' or "' + id[i] + '" in parents';
+        }
+
+        request = this.gapi.client.drive.files.list({
+            q: '(mimeType="application/vnd.google-apps.folder") and (' + parentString + ') and (trashed != true)'
+        });
+        request.execute(function(resp) {
+            console.debug(resp);
+            deferred.resolve(resp['items']);
         });
         return deferred;
     };

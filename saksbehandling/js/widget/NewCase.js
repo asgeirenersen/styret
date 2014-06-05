@@ -49,6 +49,10 @@ define([
         return deferred;
     };
     
+    NewCase.prototype.getHighestCaseNumberForYear = function (year) {
+        
+    };
+    
     NewCase.prototype.buildUI = function () {
         var rootElement = $('<div></div>'),
             head = $('<h2></h2>').text('Opprett ny sak'),

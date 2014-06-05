@@ -121,9 +121,8 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
             retVal = $.Deferred(),
             deferred = this.folderManager.getFoldersByParentId(parentFolderId);
         
-        deferred.done(function (resp) {
+        deferred.done(function (items) {
             var output = $('.listWrapper', _this.rootElement),
-                items = resp['items'],
                 table = $('<table></table>'),
                 i = 0;
             output.empty();
