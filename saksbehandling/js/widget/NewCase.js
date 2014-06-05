@@ -40,7 +40,7 @@ define([
     
     NewCase.prototype.createCase = function () {
         var deferred;
-        deferred = this.caseManager.createFolder(
+        deferred = this.caseManager.createCase(
                 $('input[name="title"]', this.rootElement).val(),
                 $('input[name="description"]', this.rootElement).val(),
                 this.caseManager.statusOpen
