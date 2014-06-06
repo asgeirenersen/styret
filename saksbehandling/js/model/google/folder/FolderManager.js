@@ -55,9 +55,9 @@ define(['jquery'], function($) {
             request,
             i = 1;
         
-        parentString += '"' + ids[0] + '" in parents';
+        parentString = '("' + ids[0] + '" in parents)';
         for (i; i < ids.length; i += 1) {
-            parentString += ' or "' + id[i] + '" in parents';
+            parentString += ' or ("' + ids[i] + '" in parents)';
         }
 
         request = this.gapi.client.drive.files.list({

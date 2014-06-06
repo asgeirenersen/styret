@@ -48,18 +48,6 @@ define({
         return year + '-' + num;
     },
 
-    getAllOpenCases: function () {
-        var rootFolder = DocsList.getFolderById(openCasesFolderId);
-        var caseFolders = rootFolder.getFolders();
-        return caseFolders;
-    },
-
-    getAllClosedCases: function () {
-        var rootFolder = DocsList.getFolderById(closedCasesFolderId);
-        var caseFolders = rootFolder.getFolders();
-        return caseFolders;
-    },
-
     getCaseIdFromString: function (str) {
         return str.substring(0, 9); 
     },
@@ -68,8 +56,14 @@ define({
         return str.substring(11);
     },
 
+    /**
+     * Gets the year part of the case id.
+     *
+     * @param {string} caseId
+     * @returns {string}
+     */
     getYearFromCaseId: function (caseId) {
-        return caseId.substring(0, 4); 
+        return caseId.substring(0, 4);
     },
 
     getNumberFromCaseId: function (caseId) {

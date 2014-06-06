@@ -1,4 +1,8 @@
-define(function () {
+define([
+    'model/core/case/CaseNumberHelper',
+    'jquery'
+],
+function (cnHelper, $) {
 
     var CaseManager = function (config, folderManager) {
         this.config = config;
@@ -57,27 +61,63 @@ define(function () {
      * @return {string} The highest existing case id in the system. (Highest year, highest number.)
      */
     CaseManager.prototype.getHighestCaseId = function (year) {
-        var caseFolders,
-            caseIds = [],
-            highestId,
-            name,
-            id;
+        var retVal = $.Deferred(),
+            deferred;
 
-        caseFolders = this.getAllCases();
-        for (i = 0; i < caseFolders.length; i++) {
-            name = caseFolders[i].getName();
-            id = getCaseIdFromString(name);
-            if (validateCaseId(id) && getYearFromCaseId(id) === year) {
-                caseIds.push(id);
+        deferred = this.getAllCases();
+        deferred.done(function (items) {
+            var caseIds = [],
+                name,
+                id,
+                i = 0,
+                highestId;
+
+            for (i; i < items.length; i++) {
+                name = items[i]['title'];
+                id = cnHelper.getCaseIdFromString(name);
+                if (cnHelper.validateCaseId(id) && 
+                        parseInt(cnHelper.getYearFromCaseId(id), 10) === year) {
+                    caseIds.push(id);
+                }
             }
-        }
-        if (caseIds.length === 0) {
-                return null; 
-        }
-        caseIds.sort();
-        highestId = caseIds[caseIds.length - 1];
+            if (caseIds.length === 0) {
+                    retVal.reject(null);
+            }
+            caseIds.sort();
+            highestId = caseIds[caseIds.length - 1];
+            
+            retVal.resolve(highestId);
+        });
 
-        return highestId;
+        return retVal;
+    };
+    
+    /**
+     * Gets the next available case id for a given year.
+     * The id will be a string on the format "YYYY-nnnn".
+     *
+     * @param {type} year
+     * @returns {String}
+     */
+    CaseManager.prototype.getNextAvailableCaseIdForYear = function (year) {
+        var deferred,
+            retVal = $.Deferred();
+    
+        deferred = this.getHighestCaseId(year);
+        deferred.done(function (highestExisting) {
+            var num = 0;
+
+            if (highestExisting !== null) {
+                num = cnHelper.getNumberFromCaseId(highestExisting);
+                num = parseInt(num, 10);
+            }
+            num ++;
+            num = cnHelper.padToFour(num);
+
+            retVal.resolve(year + '-' + num);
+        });
+
+        return retVal;
     };
     
     CaseManager.prototype.getCasesByStatus = function (status) {
@@ -94,9 +134,10 @@ define(function () {
         var deferred,
             ids = [];
 
-        ids.append(this.getFolderIdForStatus(this.statusOpen));
-        ids.append(this.getFolderIdForStatus(this.closedOpen));
-        deferred = this.folderManager.getFoldersByParentId(ids);
+        ids.push(this.getFolderIdForStatus(this.statusOpen));
+        ids.push(this.getFolderIdForStatus(this.statusClosed));
+        ids.push(this.getFolderIdForStatus(this.statusPossible));
+        deferred = this.folderManager.getFoldersByParentIds(ids);
         
         return deferred;
     };
