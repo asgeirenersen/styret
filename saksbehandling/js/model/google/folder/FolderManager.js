@@ -108,6 +108,16 @@ define(['jquery'], function($) {
         return deferred;
     };
     
+    /**
+     * Creates a new folder.
+     * The returned deferred will be resolved with the response object as
+     * the parameter passed to the callback methods.
+     *
+     * @param {string} title
+     * @param {string} description
+     * @param {string} parentFolderId
+     * @returns {Deferred}
+     */
     FolderManager.prototype.createFolder = function (title, description, parentFolderId) {
         var deferred = $.Deferred();
             request = this.gapi.client.drive.files.insert({

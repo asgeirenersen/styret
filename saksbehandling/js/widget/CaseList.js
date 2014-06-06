@@ -1,7 +1,18 @@
 
-define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager, $) {
+define([
+    'model/google/folder/FolderManager',
+    'jquery'
+], function (FolderManager, $) {
     var instance = null;
 
+    /**
+     * Constructor method.
+     *
+     * @param {gapi} gapi Google api client
+     * @param {object} app
+     * @param {object} config
+     * @returns {CaseList}
+     */
     var CaseList = function (gapi, app, config) {
         if (instance === null) {
             instance = this;
@@ -14,6 +25,10 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         this.rootElement;
     };
     
+    /**
+     * Initializes the widget.
+     * Must be called before using the widget.
+     */
     CaseList.prototype.init = function () {
         var _this = this;
 
@@ -30,14 +45,29 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         });
     };
     
+    /**
+     * Displays the widget.
+     *
+     * @returns {undefined}
+     */
     CaseList.prototype.show = function () {
         this.rootElement.css('display', 'block');
     };
     
+    /**
+     * Hides the widget.
+     *
+     * @returns {undefined}
+     */
     CaseList.prototype.hide = function () {
         this.rootElement.css('display', 'none');
     };
     
+    /**
+     * Fetches and diplays a list of all open cases.
+     *
+     * @returns {undefined}
+     */
     CaseList.prototype.listOpenCases = function () {
         var _this = this,
             listReady = this.listCases(this.config.openCasesFolder);
@@ -64,6 +94,11 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         });
     };
     
+    /**
+     * Fetches and diplays a list of all closed cases.
+     *
+     * @returns {undefined}
+     */
     CaseList.prototype.listClosedCases = function () {
         var _this = this,
             listReady = this.listCases(this.config.closedCasesFolder);
@@ -90,6 +125,11 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         });
     };
     
+    /**
+     * Fetches and diplays a list of all possible cases.
+     *
+     * @returns {undefined}
+     */
     CaseList.prototype.listPossibleCases = function () {
         var _this = this,
             listReady = this.listCases(this.config.possibleCasesFolder);
@@ -116,6 +156,11 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         });
     };
     
+    /**
+     * Fetches and diplays a list of all cases with  given parent folder.
+     *
+     * @returns {undefined}
+     */
     CaseList.prototype.listCases = function (parentFolderId) {
         var _this = this,
             retVal = $.Deferred(),
@@ -141,6 +186,15 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         return retVal;
     };
     
+    /**
+     * Moves a case from one parent folder to another.
+     *
+     * @param {type} id
+     * @param {type} fromFolderId
+     * @param {type} toFolderId
+     * @param {type} callback
+     * @returns {undefined}
+     */
     CaseList.prototype.moveCase = function (id, fromFolderId, toFolderId, callback) {
         var _this = this,
             deferred1,
@@ -156,6 +210,11 @@ define(['model/google/folder/FolderManager', 'jquery'], function (FolderManager,
         });
     };
     
+    /**
+     * Bukds the widget markup.
+     *
+     * @returns {$}
+     */
     CaseList.prototype.buildUI = function () {
         var rootElement = $('<div></div>'),
             html = $(

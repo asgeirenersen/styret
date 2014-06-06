@@ -7,51 +7,23 @@ define({
     caseIdPattern: /[0-9]{4}-[0-9]{4}/,
 
     /**
+     * Gets the first 9 characters of a string.
+     * (That is supposed to be the case id in case folder names.)
      *
-     * @param {int} year
-     * @return {string} The highest existing case id in the system. (Highest year, highest number.)
+     * @param {string} str
+     * @returns {string}
      */
-    getHighestCaseId: function (year) {
-        var caseFolders,
-            caseIds = [],
-            highestId,
-            name,
-            id;
-
-        caseFolders = this.getAllOpenCases();
-        caseFolders = caseFolders.concat(this.getAllClosedCases());
-        for (i = 0; i < caseFolders.length; i++) {
-            name = caseFolders[i].getName();
-            id = getCaseIdFromString(name);
-            if (validateCaseId(id) && getYearFromCaseId(id) === year) {
-                caseIds.push(id);
-            }
-        }
-        if (caseIds.length === 0) {
-                return null; 
-        }
-        caseIds.sort();
-        highestId = caseIds[caseIds.length - 1];
-
-        return highestId;
-    },
-
-    getNextAvailableCaseIdForYear: function (year) {
-        var highestExisting = getHighestCaseId(year),
-            num = 0;
-        if (highestExisting !== null) {
-            num = getNumberFromCaseId(highestExisting);
-            num = parseInt(num, 10);
-        }
-        num ++;
-        num = padToFour(num);
-        return year + '-' + num;
-    },
-
     getCaseIdFromString: function (str) {
         return str.substring(0, 9); 
     },
 
+    /**
+     * Strips the case id from a string.
+     * (Actually just strips off the first 11 characters.)
+     *
+     * @param {string} str
+     * @returns {string}
+     */
     stripCaseIdFromString: function (str) {
         return str.substring(11);
     },
@@ -66,10 +38,22 @@ define({
         return caseId.substring(0, 4);
     },
 
+    /**
+     * Gets the number part of a case id.
+     *
+     * @param {string} caseId
+     * @returns {string}
+     */
     getNumberFromCaseId: function (caseId) {
         return caseId.substring(5, 9);
     },
 
+    /**
+     * Checks if a string conforms to the format "YYYY-nnnn".
+     *
+     * @param {string} str
+     * @returns (Boolean}
+     */
     validateCaseId: function (str) {
         if (str.length !== 9) {
             return false; 
@@ -77,6 +61,12 @@ define({
         return this.caseIdPattern.test(str);
     },
 
+    /**
+     * Pads a number with enough zeros to make it 4 charcters long.
+     * 
+     * @param {string} number
+     * @returns {String}
+     */
     padToFour: function (number) {
         if (number<=9999) {
             number = ('000' + number).slice(-4);
