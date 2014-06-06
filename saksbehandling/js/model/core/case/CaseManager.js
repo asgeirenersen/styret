@@ -21,16 +21,28 @@ function (cnHelper, $) {
      * @returns {@this;@pro;folderManager@call;createFolder}
      */
     CaseManager.prototype.createCase = function (title, description, status) {
-        var deferred,
-            folderId = this.getFolderIdForStatus(status);
+        var _this = this,
+            caseIdDef,
+            retVal = $.Deferred(),
+            folderId = this.getFolderIdForStatus(status),
+            year;
 
-        deferred = this.folderManager.createFolder(
-                title,
+        year = new Date().getFullYear();
+        caseIdDef = this.getNextAvailableCaseIdForYear(year);
+        caseIdDef.done(function (nextId) {
+            console.debug(nextId);
+            var deferred = _this.folderManager.createFolder(
+                nextId + ' | ' + title,
                 description,
                 folderId
-        );
+            );
+            deferred.done(function (res) {
+                console.debug(res);
+                retVal.resolve(res);
+            });
+        });
 
-        return deferred;
+        return retVal;
     };
     
     /**

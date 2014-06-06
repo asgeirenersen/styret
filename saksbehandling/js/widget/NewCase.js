@@ -31,10 +31,6 @@ define([
             deferred;
 
         this.rootElement = this.buildUI();
-        deferred = this.caseManager.getNextAvailableCaseIdForYear(2014);
-        deferred.done(function (number) {
-            $('div.highestNumber', _this.rootElement).text(number);
-        });
         this.parentApp.getRootElement().append(this.rootElement);
         
         $('button', this.rootElement).on('click', function () {
@@ -64,7 +60,6 @@ define([
     NewCase.prototype.buildUI = function () {
         var rootElement = $('<div></div>'),
             head = $('<h2></h2>').text('Opprett ny sak'),
-            numberPlaceholder = $('<div class="highestNumber"></div>'),
             form = $('<form name="newCase" role="form"></form>'),
             titleLabel = $('<label>Tittel</label>'),
             titleInput = $('<input type="text" name="title" class="form-control">'),
@@ -77,7 +72,6 @@ define([
             formGroupStr = '<div class="form-group"></div>';
     
         form.append($(formGroupStr).append(titleLabel.append(titleInput)));
-        form.append(numberPlaceholder);
         form.append($(formGroupStr).append(descriptionLabel.append(descriptionInput)));
         form.append($(radioOpen));
         form.append($(radioClosed));
