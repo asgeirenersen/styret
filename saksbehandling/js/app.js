@@ -2,8 +2,9 @@
 define([
     'AuthorizationManager',
     'widget/CaseList',
+    'widget/NewCase',
     'jquery'
-], function (AuthorizationManager, CaseList, $) {
+], function (AuthorizationManager, CaseList, NewCase, $) {
     
     /**
      * @param {object} config
@@ -22,6 +23,7 @@ define([
         this.id = 'App_' + new Date().getTime();
         this.rootElement = this.buildUI();
         this.wrapperElement.append(this.rootElement);
+        this.addListeners();
     };
     
     /**
@@ -32,11 +34,7 @@ define([
             deferred = this.authorize(false);
         
         deferred.done(function () {
-            console.log('Auth success!');
             _this.addWidgets();
-        });
-        deferred.fail(function () {
-            console.log('Auth failed!');
         });
     };
     
@@ -52,9 +50,11 @@ define([
         
         deferred.done(function (loggedIn) {
             if (!loggedIn) {
+                console.log('Auth failed!');
                 _this.showLogin();
                 result.reject(false);
             } else {
+                console.log('Auth success!');
                 _this.hideLogin();
                 result.resolve(true);
             }
@@ -77,8 +77,13 @@ define([
     App.prototype.addWidgets = function () {
         var caseList = new CaseList(this.gapi, this, this.config);
         caseList.init();
-        
         this.addWidget(caseList, 'Saksliste');
+        
+        
+        var newCase = new NewCase(this.gapi, this, this.config);
+        newCase.init();
+        this.addWidget(newCase, 'Ny sak');
+        
         this.switchToWidget(caseList);  
     };
     
@@ -131,7 +136,7 @@ define([
         menuBar = $('<div class="navbar navbar-default"></div>');
         menuBar.append('<div class="navbar-collapse collapse"><ul class="nav navbar-nav"></ul></div>');
         rootElement.append(menuBar);
-        rootElement.append('<button type="button" class="btn btn-danger authorize-button" style="visibility: hidden">Logg inn</button>');
+        rootElement.append('<button type="button" class="btn btn-danger authorize-button" style="display: none">Logg inn</button>');
         
         return rootElement;
     };
@@ -139,8 +144,10 @@ define([
     App.prototype.addListeners = function () {
         var _this = this;
 
-        $('authorize-button', this.rootElement).on('click', null, function () {
-            _this.authorize(true);
+        $('.authorize-button', this.rootElement).on('click', null, function () {
+            _this.authorize(true).done(function () {
+                _this.addWidgets();
+            });
         });
     };
     
