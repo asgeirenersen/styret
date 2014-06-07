@@ -168,8 +168,10 @@ define([
         
         deferred.done(function (items) {
             var output = $('.listWrapper', _this.rootElement),
-                table = $('<table></table>'),
+                wrapper = $('<div class="table-responsive"></div>'),
+                table = $('<table class="table table-striped table-condensed"></table>'),
                 i = 0;
+
             output.empty();
             for (i; i < items.length; i = i +1) {
                 var tr = $('<tr></tr>'),
@@ -179,7 +181,8 @@ define([
                 tr.append(buttonTd);
                 table.append(tr);
             }
-            output.append(table);
+            wrapper.apend(table);
+            output.append(wrapper);
             retVal.resolve();
         });
         

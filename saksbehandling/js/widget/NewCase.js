@@ -55,7 +55,7 @@ define([
      *
      * @returns {undefined}
      */
-    CaseList.prototype.show = function () {
+    NewCase.prototype.show = function () {
         this.rootElement.css('display', 'block');
     };
     
@@ -64,7 +64,7 @@ define([
      *
      * @returns {undefined}
      */
-    CaseList.prototype.hide = function () {
+    NewCase.prototype.hide = function () {
         this.rootElement.css('display', 'none');
     };
     
