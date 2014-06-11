@@ -4,6 +4,13 @@ define([
 ],
 function (cnHelper, $) {
 
+    /**
+     * Constructor method.
+     *
+     * @param {object} config
+     * @param {FolderManager} folderManager
+     * @returns {CaseManager}
+     */
     var CaseManager = function (config, folderManager) {
         this.config = config;
         this.folderManager = folderManager;
@@ -68,9 +75,10 @@ function (cnHelper, $) {
     };
     
     /**
+     * Gets the highest existing case id for a given year.
      *
      * @param {int} year
-     * @return {string} The highest existing case id in the system. (Highest year, highest number.)
+     * @return {string}
      */
     CaseManager.prototype.getHighestCaseId = function (year) {
         var retVal = $.Deferred(),
@@ -132,6 +140,12 @@ function (cnHelper, $) {
         return retVal;
     };
     
+    /**
+     * Gets all cases with a given status.
+     *
+     * @param {type} status
+     * @returns {_L5.CaseManager.prototype.getCasesByStatus@pro;folderManager@call;getFoldersByParentId}
+     */
     CaseManager.prototype.getCasesByStatus = function (status) {
         var deferred,
             parentFolderId;
@@ -142,6 +156,11 @@ function (cnHelper, $) {
         return deferred;
     };
     
+    /**
+     * Gets all existing cases, regardless of status.
+     *
+     * @returns {_L5.CaseManager.prototype.getAllCases@pro;folderManager@call;getFoldersByParentIds}
+     */
     CaseManager.prototype.getAllCases = function () {
         var deferred,
             ids = [];

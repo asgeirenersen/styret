@@ -63,16 +63,22 @@ define([
         return result;
     };
     
+    /**
+     * Show the login button.
+     */
     App.prototype.showLogin = function () {
         $('.authorize-button', this.rootElement).css('display', 'block');
     };
     
+    /**
+     * Hide the login button.
+     */
     App.prototype.hideLogin = function () {
         $('.authorize-button', this.rootElement).css('display', 'none');
     };
     
     /**
-     * Adds all widgets to the menu.
+     * Adds all available widgets to the menu.
      */
     App.prototype.addWidgets = function () {
         var caseList = new CaseList(this.gapi, this, this.config);
@@ -141,6 +147,9 @@ define([
         return rootElement;
     };
     
+    /**
+     * Adds event listeners to the UI elements.
+     */
     App.prototype.addListeners = function () {
         var _this = this;
 

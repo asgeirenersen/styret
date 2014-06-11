@@ -4,7 +4,7 @@
  * @param {type} FolderManager
  * @param {type} CaseManager
  * @param {type} $
- * @returns {_L8.NewCase}
+ * @returns {NewCase}
  */
 define([
     'model/google/folder/FolderManager',
@@ -13,6 +13,13 @@ define([
 ], function (FolderManager, CaseManager, $) {
     var instance = null;
 
+    /**
+     * 
+     * @param {Object} gapi Instance of Google API client
+     * @param {object} app
+     * @param {object} config
+     * @returns {NewCase}
+     */
     var NewCase = function (gapi, app, config) {
         if (instance === null) {
             instance = this;
@@ -26,9 +33,14 @@ define([
         this.rootElement;
     };
     
+    /**
+     * Initializes the widget.
+     * Must be called before using the widget.
+     *
+     * @returns {undefined}
+     */
     NewCase.prototype.init = function () {
-        var _this = this,
-            deferred;
+        var _this = this;
 
         this.rootElement = this.buildUI();
         this.parentApp.getRootElement().append(this.rootElement);
@@ -38,14 +50,28 @@ define([
         });
     };
 
-    NewCase.prototype.show = function () {
+    /**
+     * Displays the widget.
+     *
+     * @returns {undefined}
+     */
+    CaseList.prototype.show = function () {
         this.rootElement.css('display', 'block');
     };
     
-    NewCase.prototype.hide = function () {
+    /**
+     * Hides the widget.
+     *
+     * @returns {undefined}
+     */
+    CaseList.prototype.hide = function () {
         this.rootElement.css('display', 'none');
     };
     
+    /**
+     * Creates and saves a new case.
+     * @returns {Deferred}
+     */
     NewCase.prototype.createCase = function () {
         var deferred;
         deferred = this.caseManager.createCase(
@@ -57,6 +83,11 @@ define([
         return deferred;
     };
     
+    /**
+     * Builds the widget UI.
+     *
+     * @returns {$}
+     */
     NewCase.prototype.buildUI = function () {
         var rootElement = $('<div></div>'),
             head = $('<h2></h2>').text('Opprett ny sak'),
