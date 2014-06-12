@@ -2,8 +2,10 @@
 define([
     'model/google/folder/FolderManager',
     'model/core/case/CaseManager',
-    'jquery'
-], function (FolderManager, CaseManager, $) {
+    'jquery',
+    'handlebars',
+    'text!widget/caselist/list.html'
+], function (FolderManager, CaseManager, $, Handlebars, listTemplate) {
     var instance = null;
 
     /**
@@ -160,24 +162,17 @@ define([
         var _this = this,
             retVal = $.Deferred(),
             deferred = this.caseManager.getCasesByStatus(status);
-        
+
         deferred.done(function (items) {
             var output = $('.listWrapper', _this.rootElement),
-                wrapper = $('<div class="table-responsive"></div>'),
-                table = $('<table class="table table-striped table-condensed"></table>'),
-                i = 0;
-
-            output.empty();
-            for (i; i < items.length; i = i +1) {
-                var tr = $('<tr></tr>'),
-                    buttonTd = $('<td class="rowButtons"></td>');
-                tr.attr('data-id', items[i]['id']);
-                tr.append('<td class="caseTitle">' + items[i]['title'] + '</td>');
-                tr.append(buttonTd);
-                table.append(tr);
-            }
-            wrapper.append(table);
-            output.append(wrapper);
+                html,
+                template;
+            
+            output.empty();   
+            template = Handlebars.compile(listTemplate);
+            html = template({"items": items});
+            output.append(html);
+            
             retVal.resolve();
         });
         

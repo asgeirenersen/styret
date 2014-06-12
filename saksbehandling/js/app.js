@@ -1,8 +1,8 @@
 /* global require, define */
 define([
     'AuthorizationManager',
-    'widget/CaseList',
-    'widget/NewCase',
+    'widget/caselist/CaseList',
+    'widget/newcase/NewCase',
     'jquery'
 ], function (AuthorizationManager, CaseList, NewCase, $) {
     

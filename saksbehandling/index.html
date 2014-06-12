@@ -44,6 +44,11 @@
 
             require.config({
                 baseUrl: 'js',
+                shim: {
+                    handlebars: {
+                        exports: 'Handlebars'
+                    }
+                }
             });
 
             // Use a button to handle authentication the first time.
