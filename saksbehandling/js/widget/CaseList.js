@@ -181,7 +181,7 @@ define([
                 tr.append(buttonTd);
                 table.append(tr);
             }
-            wrapper.apend(table);
+            wrapper.append(table);
             output.append(wrapper);
             retVal.resolve();
         });
