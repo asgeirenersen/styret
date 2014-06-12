@@ -1,8 +1,9 @@
 
 define([
     'model/google/folder/FolderManager',
+    'model/core/case/CaseManager',
     'jquery'
-], function (FolderManager, $) {
+], function (FolderManager, CaseManager, $) {
     var instance = null;
 
     /**
@@ -22,6 +23,7 @@ define([
         this.config = config;
         this.id = 'CaseList_' + new Date().getTime();
         this.folderManager = new FolderManager(gapi);
+        this.caseManager = new CaseManager(this.config, this.folderManager);
         this.rootElement;
     };
     
@@ -56,8 +58,6 @@ define([
     
     /**
      * Hides the widget.
-     *
-     * @returns {undefined}
      */
     CaseList.prototype.hide = function () {
         this.rootElement.css('display', 'none');
@@ -65,12 +65,10 @@ define([
     
     /**
      * Fetches and diplays a list of all open cases.
-     *
-     * @returns {undefined}
      */
     CaseList.prototype.listOpenCases = function () {
         var _this = this,
-            listReady = this.listCases(this.config.openCasesFolder);
+            listReady = this.listCases(this.caseManager.statusOpen);
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
@@ -96,12 +94,10 @@ define([
     
     /**
      * Fetches and diplays a list of all closed cases.
-     *
-     * @returns {undefined}
      */
     CaseList.prototype.listClosedCases = function () {
         var _this = this,
-            listReady = this.listCases(this.config.closedCasesFolder);
+            listReady = this.listCases(this.caseManager.statusClosed);
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
@@ -127,12 +123,10 @@ define([
     
     /**
      * Fetches and diplays a list of all possible cases.
-     *
-     * @returns {undefined}
      */
     CaseList.prototype.listPossibleCases = function () {
         var _this = this,
-            listReady = this.listCases(this.config.possibleCasesFolder);
+            listReady = this.listCases(this.caseManager.statusPossible);
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
@@ -159,12 +153,13 @@ define([
     /**
      * Fetches and diplays a list of all cases with  given parent folder.
      *
-     * @returns {undefined}
+     * @param {String} status One of the status "constants" in CaseManager.
+     * @returns {Deferred}
      */
-    CaseList.prototype.listCases = function (parentFolderId) {
+    CaseList.prototype.listCases = function (status) {
         var _this = this,
             retVal = $.Deferred(),
-            deferred = this.folderManager.getFoldersByParentId(parentFolderId);
+            deferred = this.caseManager.getCasesByStatus(status);
         
         deferred.done(function (items) {
             var output = $('.listWrapper', _this.rootElement),
