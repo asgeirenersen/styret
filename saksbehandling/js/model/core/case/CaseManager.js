@@ -172,6 +172,22 @@ function (cnHelper, $) {
         
         return deferred;
     };
+    
+    CaseManager.prototype.changeStatus = function (id, fromStatus, toStatus, callback) {
+        var _this = this,
+            toFolderId = this.getFolderIdForStatus(toStatus),
+            fromFolderId = this.getFolderIdForStatus(fromStatus);
+            
+        this.folderManager.addParent(id, toFolderId)
+            .done(function () {
+                _this.folderManager.removeParent(id, fromFolderId)
+                    .done(function (resp) {
+                        console.debug(resp);
+                        callback.call(_this);
+                    });
+            }
+        );
+    };
  
     return CaseManager;
 });

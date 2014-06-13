@@ -87,8 +87,8 @@ define([
 
                 e.preventDefault();
                 if (confirm(confirmTxt)) {
-                    _this.moveCase(id, _this.config.openCasesFolder, _this.config.closedCasesFolder, function () {
-                        this.listOpenCases();
+                    _this.caseManager.changeStatus(id, _this.caseManager.statusOpen, _this.caseManager.statusClosed, function () {
+                        _this.listOpenCases();
                     });
                 }
             });
@@ -116,8 +116,8 @@ define([
 
                 e.preventDefault();
                 if (confirm(confirmTxt)) {
-                    _this.moveCase(id, _this.config.closedCasesFolder, _this.config.openCasesFolder, function () {
-                        this.listClosedCases();
+                    _this.caseManager.changeStatus(id, _this.caseManager.statusClosed, _this.caseManager.statusOpen, function () {
+                        _this.listClosedCases();
                     });
                 }
             });
@@ -145,8 +145,8 @@ define([
 
                 e.preventDefault();
                 if (confirm(confirmTxt)) {
-                    _this.moveCase(id, _this.config.possibleCasesFolder, _this.config.openCasesFolder, function () {
-                        this.listPossibleCases();
+                    _this.caseManager.changeStatus(id, _this.caseManager.statusPossible, _this.caseManager.statusOpen, function () {
+                        _this.listPossibleCases();
                     });
                 }
             });
@@ -178,30 +178,6 @@ define([
         });
         
         return retVal;
-    };
-    
-    /**
-     * Moves a case from one parent folder to another.
-     *
-     * @param {type} id
-     * @param {type} fromFolderId
-     * @param {type} toFolderId
-     * @param {type} callback
-     * @returns {undefined}
-     */
-    CaseList.prototype.moveCase = function (id, fromFolderId, toFolderId, callback) {
-        var _this = this,
-            deferred1,
-            deferred2;
-            
-        deferred1 = this.folderManager.addParent(id, toFolderId);
-        deferred1.done(function () {
-            deferred2 = _this.folderManager.removeParent(id, fromFolderId);
-            deferred2.done(function (resp) {
-                console.debug(resp);
-                callback.call(_this);
-            });
-        });
     };
     
     /**
