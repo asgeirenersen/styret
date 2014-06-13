@@ -4,8 +4,9 @@ define([
     'model/core/case/CaseManager',
     'jquery',
     'handlebars',
-    'text!widget/caselist/list.html'
-], function (FolderManager, CaseManager, $, Handlebars, listTemplate) {
+    'text!widget/caselist/list.html',
+    'text!widget/caselist/main.html'
+], function (FolderManager, CaseManager, $, Handlebars, listTemplate, mainTemplate) {
     var instance = null;
 
     /**
@@ -209,17 +210,13 @@ define([
      * @returns {$}
      */
     CaseList.prototype.buildUI = function () {
-        var rootElement = $('<div></div>'),
-            html = $(
-                '<p>\n' +
-                    '<button name="getOpenCases" class="btn btn-sm btn-primary" type="button">Åpne saker</button>\n' +
-                    '<button name="getClosedCases" class="btn btn-sm btn-success" type="button">Lukkede saker</button>\n' +
-                    '<button name="getPossibleCases" class="btn btn-sm btn-warning" type="button">Kanskjesaker</button>\n' +
-                '</p>\n' +
-                '<div class="listWrapper"></div>');
+        var template,
+            rootElement,
+            html;
 
-        rootElement.attr('id', this.id);
-        rootElement.append(html);
+        template = Handlebars.compile(mainTemplate);
+        html = template({"id": this.id});
+        rootElement = $(html);
 
         return rootElement;
     };
