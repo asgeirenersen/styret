@@ -46,7 +46,9 @@ define([
         this.parentApp.getRootElement().append(this.rootElement);
         
         $('button', this.rootElement).on('click', function () {
-            _this.createCase();
+            _this.createCase().done(function () {
+                $(_this.parentApp.getRootElement()).trigger('case:added');
+            });
         });
     };
 

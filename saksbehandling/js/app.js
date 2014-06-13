@@ -14,6 +14,8 @@ define([
      */
     var App = function (config, gapi, clientId, wrapperElement) {
         this.widgets = [];
+        this.caseList;
+        this.newCase;
         this.gapi = gapi;
         this.clientId = clientId;
         this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
@@ -81,16 +83,16 @@ define([
      * Adds all available widgets to the menu.
      */
     App.prototype.addWidgets = function () {
-        var caseList = new CaseList(this.gapi, this, this.config);
-        caseList.init();
-        this.addWidget(caseList, 'Saksliste');
+        this.caseList = new CaseList(this.gapi, this, this.config);
+        this.caseList.init();
+        this.addWidget(this.caseList, 'Saksliste');
         
         
-        var newCase = new NewCase(this.gapi, this, this.config);
-        newCase.init();
-        this.addWidget(newCase, 'Ny sak');
+        this.newCase = new NewCase(this.gapi, this, this.config);
+        this.newCase.init();
+        this.addWidget(this.newCase, 'Ny sak');
         
-        this.switchToWidget(caseList);  
+        this.switchToWidget(this.caseList);
     };
     
     /**
@@ -157,6 +159,11 @@ define([
             _this.authorize(true).done(function () {
                 _this.addWidgets();
             });
+        });
+        
+        $(this.rootElement).on('case:added', function (event) {
+            _this.switchToWidget(_this.caseList);
+            _this.caseList.listOpenCases();
         });
     };
     

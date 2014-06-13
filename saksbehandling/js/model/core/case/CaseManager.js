@@ -173,6 +173,17 @@ function (cnHelper, $) {
         return deferred;
     };
     
+    /**
+     * Changes the status of a case.
+     * For now, this just means moving the case folder from
+     * one parent folder to another.
+     * 
+     * @param {string} id
+     * @param {string} fromStatus
+     * @param {string} toStatus
+     * @param {function} callback This function is called when the moving is done.
+     * @returns {undefined}
+     */
     CaseManager.prototype.changeStatus = function (id, fromStatus, toStatus, callback) {
         var _this = this,
             toFolderId = this.getFolderIdForStatus(toStatus),

@@ -75,7 +75,7 @@ define([
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
-                $(this).append('<a class="closeBtn" href="#">&nbsp;(Lukk)</a>');
+                $(this).append('<a class="closeBtn" href="#">(Lukk)</a>');
             });
 
             $('.closeBtn', _this.rootElement).on('click', null, function (e) {
@@ -104,7 +104,7 @@ define([
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
-                $(this).append('<a class="reopenBtn" href="#">&nbsp;(Gjenåpne)</a>');
+                $(this).append('<a class="reopenBtn" href="#">(Gjenåpne)</a>');
             });
 
             $('.reopenBtn', _this.rootElement).on('click', null, function (e) {
@@ -133,7 +133,7 @@ define([
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
-                $(this).append('<a class="openBtn" href="#">&nbsp;(Åpne)</a>');
+                $(this).append('<a class="openBtn" href="#">(Åpne)</a>');
             });
 
             $('.openBtn', _this.rootElement).on('click', null, function (e) {
@@ -171,7 +171,10 @@ define([
             
             output.empty();   
             template = Handlebars.compile(listTemplate);
-            html = template({"items": items});
+            html = template({
+                "items": items,
+                "status": status
+            });
             output.append(html);
             
             retVal.resolve();
