@@ -53,6 +53,49 @@ function (cnHelper, $) {
     };
     
     /**
+     * 
+     * @param {string} title
+     * @param {string} description
+     * @param {string} status
+     * @returns {@this;@pro;folderManager@call;createFolder}
+     */
+    CaseManager.prototype.updateCase = function (title, description, status) {
+        var _this = this,
+            deferred, 
+            retVal = $.Deferred(),
+            folderId = this.getFolderIdForStatus(status);
+
+            var deferred = _this.folderManager.updateFolder(
+                title,
+                description,
+                folderId
+            );
+            deferred.done(function (res) {
+                console.debug(res);
+                retVal.resolve(res);
+            });
+
+        return retVal;
+    };
+    
+    /**
+     * Get a case by the id of the main case folder in Google Drive.
+     *
+     * @param {string} folderId
+     * @returns {Deferred}
+     */
+    CaseManager.prototype.getCaseByFolderId = function (folderId) {
+        var retVal = $.Deferred(),
+            deferred = this.folderManager.getById(folderId);
+
+        deferred.done(function (resp) {
+            retVal.resolve(resp);
+        });
+        
+        return retVal;
+    };
+    
+    /**
      * Gets the ID of the folder to use for cases with the given status.
      * 
      * @param {string} status

@@ -177,6 +177,16 @@ define([
             });
             output.append(html);
             
+            $('a.edit-list-item', _this.rootElement).on('click', null, function (e) {
+                var clickedElement = $(e.target),
+                    tr = clickedElement.closest('tr'),
+                    id = tr.attr('data-id'),
+                    title = $('.caseTitle', tr).text();
+
+                e.preventDefault();
+                $(_this.parentApp.getRootElement()).trigger('case:editRequested', [id]);
+            });
+            
             retVal.resolve();
         });
         

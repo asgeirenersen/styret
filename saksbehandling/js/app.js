@@ -3,8 +3,9 @@ define([
     'AuthorizationManager',
     'widget/caselist/CaseList',
     'widget/newcase/NewCase',
+    'widget/editcase/EditCase',
     'jquery'
-], function (AuthorizationManager, CaseList, NewCase, $) {
+], function (AuthorizationManager, CaseList, NewCase, EditCase, $) {
     
     /**
      * @param {object} config
@@ -16,6 +17,7 @@ define([
         this.widgets = [];
         this.caseList;
         this.newCase;
+        this.editCase;
         this.gapi = gapi;
         this.clientId = clientId;
         this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
@@ -91,6 +93,11 @@ define([
         this.newCase = new NewCase(this.gapi, this, this.config);
         this.newCase.init();
         this.addWidget(this.newCase, 'Ny sak');
+
+        
+        this.editCase = new EditCase(this.gapi, this, this.config);
+        this.editCase.init();
+        this.addWidget(this.editCase, '');
         
         this.switchToWidget(this.caseList);
     };
@@ -165,6 +172,11 @@ define([
             _this.switchToWidget(_this.caseList);
             _this.caseList.listOpenCases();
         });
+        
+        $(this.rootElement).on('case:editRequested', function (event, id) {
+            _this.switchToWidget(_this.editCase);
+            _this.editCase.populate(id);
+        });       
     };
     
     /**
