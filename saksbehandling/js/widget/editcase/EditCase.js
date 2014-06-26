@@ -30,6 +30,7 @@ define([
         this.parentApp = app;
         this.config = config;
         this.id = 'EditCase' + new Date().getTime();
+        this.folderId = null;
         this.folderManager = new FolderManager(gapi);
         this.caseManager = new CaseManager(this.config, this.folderManager);
         this.rootElement;
@@ -56,7 +57,7 @@ define([
     
     EditCase.prototype.populate = function (folderId) {
         var deferred = this.caseManager.getCaseByFolderId(folderId);
-        
+        this.folderId = folderId;
         deferred.done(function (resp) {
             $('input[name="title"]', this.rootElement).val(resp['title']);
             $('input[name="description"]', this.rootElement).val(resp['description']);
@@ -89,6 +90,7 @@ define([
     EditCase.prototype.updateCase = function () {
         var deferred;
         deferred = this.caseManager.updateCase(
+                this.folderId,
                 $('input[name="title"]', this.rootElement).val(),
                 $('input[name="description"]', this.rootElement).val(),
                 $('input[name="status"]:checked', this.rootElement).val()

@@ -14,8 +14,13 @@ function (cnHelper, $) {
     var CaseManager = function (config, folderManager) {
         this.config = config;
         this.folderManager = folderManager;
+        this.statusFolders = {
+            'possible': config.possibleCasesFolder,
+            'open': config.openCasesFolder,
+            'closed': config.closedCasesFolder
+        };
     };
-    
+
     CaseManager.prototype.statusPossible = 'possible';
     CaseManager.prototype.statusOpen = 'open';
     CaseManager.prototype.statusClosed = 'closed';
@@ -53,27 +58,30 @@ function (cnHelper, $) {
     };
     
     /**
-     * 
+     * @param {string} folderId Google folder id
      * @param {string} title
      * @param {string} description
      * @param {string} status
      * @returns {@this;@pro;folderManager@call;createFolder}
      */
-    CaseManager.prototype.updateCase = function (title, description, status) {
+    CaseManager.prototype.updateCase = function (folderId, title, description, newStatus) {
         var _this = this,
             deferred, 
             retVal = $.Deferred(),
-            folderId = this.getFolderIdForStatus(status);
+            parentFolderId = this.getFolderIdForStatus(newStatus),
+            otherParentFolderIds = this.getFolderIdsForOtherStatuses(newStatus);
 
-            var deferred = _this.folderManager.updateFolder(
-                title,
-                description,
-                folderId
-            );
-            deferred.done(function (res) {
-                console.debug(res);
-                retVal.resolve(res);
-            });
+        deferred = _this.folderManager.updateFolder(
+            folderId,
+            title,
+            description,
+            parentFolderId,
+            otherParentFolderIds.join()
+        );
+        deferred.done(function (res) {
+            console.debug(res);
+            retVal.resolve(res);
+        });
 
         return retVal;
     };
@@ -81,7 +89,7 @@ function (cnHelper, $) {
     /**
      * Get a case by the id of the main case folder in Google Drive.
      *
-     * @param {string} folderId
+     * @param {string} folderId Google folder id
      * @returns {Deferred}
      */
     CaseManager.prototype.getCaseByFolderId = function (folderId) {
@@ -98,23 +106,14 @@ function (cnHelper, $) {
     /**
      * Gets the ID of the folder to use for cases with the given status.
      * 
-     * @param {string} status
+     * @param {string} status Google folder id
      * @throws {object}
      * @returns {string}
      */
     CaseManager.prototype.getFolderIdForStatus = function (status) {
-        if (status === this.statusPossible) {
-            return this.config.possibleCasesFolder;
-        } else if (status === this.statusOpen) {
-            return this.config.openCasesFolder;
-        } else if (status === this.statusClosed) {
-            return this.config.closedCasesFolder;
+        if (this.statusFolders[status]) {
+            return this.statusFolders[status];
         }
-        
-        throw {
-            error: 'No folder found for status ' + status,
-            configUsed: this.config
-        };
     };
     
     /**
@@ -214,6 +213,28 @@ function (cnHelper, $) {
         deferred = this.folderManager.getFoldersByParentIds(ids);
         
         return deferred;
+    };
+    
+    /**
+     * Gets an array of Google folder ids.
+     * These will be the id of the folders for the other statuses than the
+     * passed status name.
+     *
+     * @param {type} status
+     * @returns {Array}
+     */
+    CaseManager.prototype.getFolderIdsForOtherStatuses = function (status) {
+        var folderIds = [],
+            i = 0,
+            names = Object.getOwnPropertyNames(this.statusFolders);
+
+        for (i; i < names.length; i++) {
+            if (names[i] !== status) {
+                folderIds.push(this.statusFolders[names[i]]);
+            }
+        }
+
+        return folderIds;
     };
     
     /**

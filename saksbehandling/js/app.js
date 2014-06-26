@@ -176,7 +176,12 @@ define([
         $(this.rootElement).on('case:editRequested', function (event, id) {
             _this.switchToWidget(_this.editCase);
             _this.editCase.populate(id);
-        });       
+        }); 
+        
+        $(this.rootElement).on('case:edited', function (event, id) {
+            _this.switchToWidget(_this.caseList);
+            _this.caseList.listOpenCases();
+        }); 
     };
     
     /**

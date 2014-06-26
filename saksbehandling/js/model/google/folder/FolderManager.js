@@ -136,21 +136,23 @@ define(['jquery'], function($) {
     };
 
     /**
-     * Creates a new folder.
+     * Updates a folder.
      * The returned deferred will be resolved with the response object as
      * the parameter passed to the callback methods.
-     *
+     * @param {string} folderId
      * @param {string} title
      * @param {string} description
      * @param {string} parentFolderId
      * @returns {Deferred}
      */
-    FolderManager.prototype.updateFolder = function (title, description, parentFolderId) {
-        var deferred = $.Deferred();
-            request = this.gapi.client.drive.files.insert({
-                resource: {
+    FolderManager.prototype.updateFolder = function (folderId, title, description, addParents, removeParents) {
+        var deferred = $.Deferred(),
+            request = this.gapi.client.drive.files.update({
+                'fileId': folderId,
+                'addParents': addParents,
+                'removeParents': removeParents,
+                'resource': {
                     title: title,
-                    mimeType: 'application/vnd.google-apps.folder',
                     description: description
                 }
             });
