@@ -26,7 +26,8 @@ function (cnHelper, $) {
     CaseManager.prototype.statusClosed = 'closed';
     
     /**
-     * 
+     * Creates a Case on the back end.
+     *
      * @param {string} title
      * @param {string} description
      * @param {string} status
