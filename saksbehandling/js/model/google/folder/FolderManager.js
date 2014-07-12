@@ -69,6 +69,56 @@ define(['jquery'], function($) {
         });
         return deferred;
     };
+    
+    /**
+     * Gets folders matching a filter object.
+     * {
+     *   "parentList": ["HGT876965976%/()", "9876vIKJ-XX"],
+     *   "ownerList": ["user.name@styret.hallagerbakken.no"]
+     * }
+     * @param {type} filter
+     * @returns {Deferred}
+     */
+    FolderManager.prototype.getFoldersByFilter = function (filter) {
+        var deferred = $.Deferred(),
+            parentString,
+            ownerString,
+            request,
+            filterOK = false,
+            i = 1,
+            j = 1;
+        
+        if (filter['parentList'] && filter['parentList'].length > 0) {
+            filterOK = true;
+            parentString = ' and (("' + filter['parentList'][0] + '" in parents)';
+            for (i; i < filter['parentList'].length; i = i + 1) {
+                parentString += ' or ("' + filter['parentList'][i] + '" in parents)';
+            }
+            parentString += ')';
+        }
+
+        if (filter['ownerList'] && filter['ownerList'].length > 0) {
+            filterOK = true;
+            ownerString = ' and (("' + filter['ownerList'][0] + '" in owners)';
+            for (j; j < filter['ownerList'].length; j = j + 1) {
+                ownerString += ' or ("' + filter['ownerList'][j] + '" in owners)';
+            }
+            ownerString += ')';
+        }
+
+        if (!filterOK) {
+            throw new Error( "Filter must specify at least one owner or parent." );
+        }
+
+        request = this.gapi.client.drive.files.list({
+            q: '(mimeType="application/vnd.google-apps.folder")' + parentString + ownerString + ' and (trashed != true)'
+        });
+        request.execute(function(resp) {
+            console.debug(resp);
+            deferred.resolve(resp['items']);
+        });
+        return deferred;
+    };    
 
     /**
      * @param {string} id ID of the folder that needs a parent

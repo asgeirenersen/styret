@@ -200,6 +200,39 @@ function (cnHelper, $) {
     };
     
     /**
+     * Gets cases matching a filter object.
+     * {
+     *   "statusList": ["open", "possible", "closed"],
+     *   "ownerList": ["user.name@styret.hallagerbakken.no"]
+     * }
+     *
+     * @param {Object} filter
+     * @returns {Deferred}
+     */
+    CaseManager.prototype.getCasesByFilter = function (filter) {
+        var deferred,
+            parentFolderList = [],
+            ownerList,
+            gFilter = {},
+            i = 0;
+        
+        if (filter['statusList']) {
+            for (i; i < filter['statusList'].length; i = i + 1) {
+                parentFolderList.push(
+                    this.getFolderIdForStatus(filter['statusList'][i])
+                );
+            }
+            gFilter['statusList'] = parentFolderList;
+        }
+        if (filter['ownerList']) {
+            gFilter['ownerList'] = ownerList;
+        }
+        deferred = this.folderManager.getFoldersByFilter(gFilter);
+        
+        return deferred;  
+    };
+    
+    /**
      * Gets all existing cases, regardless of status.
      *
      * @returns {_L5.CaseManager.prototype.getAllCases@pro;folderManager@call;getFoldersByParentIds}

@@ -74,7 +74,7 @@ define([
      */
     CaseList.prototype.listOpenCases = function () {
         var _this = this,
-            listReady = this.listCases(this.caseManager.statusOpen);
+            listReady = this.listCases(this.caseManager.statusOpen, null);
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
@@ -103,7 +103,7 @@ define([
      */
     CaseList.prototype.listClosedCases = function () {
         var _this = this,
-            listReady = this.listCases(this.caseManager.statusClosed);
+            listReady = this.listCases(this.caseManager.statusClosed, null);
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
@@ -132,7 +132,7 @@ define([
      */
     CaseList.prototype.listPossibleCases = function () {
         var _this = this,
-            listReady = this.listCases(this.caseManager.statusPossible);
+            listReady = this.listCases(this.caseManager.statusPossible, null);
         
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
@@ -157,16 +157,33 @@ define([
     };
     
     /**
+     * Fetches and diplays a list of all casses owned by user.
+     */
+    CaseList.prototype.listMyCases = function () {
+        this.listCases(this.caseManager.statusOpen, 'asgeir.enersen@styret.hallagerbakken.no');
+    };
+    
+    /**
      * Fetches and diplays a list of all cases with  given parent folder.
      *
      * @param {String} status One of the status "constants" in CaseManager.
+     * @param {String} owner The user that owns the case/folder.
      * @returns {Deferred}
      */
-    CaseList.prototype.listCases = function (status) {
+    CaseList.prototype.listCases = function (status, owner) {
         var _this = this,
             retVal = $.Deferred(),
-            deferred = this.caseManager.getCasesByStatus(status);
+            filter = {},
+            deferred;
+        
+        if (status !== null) {
+            filter['statusList'] = [status];
+        }
+        if (owner !== null) {
+            filter['ownerList'] = [owner];
+        }
 
+        deferred = this.caseManager.getCasesByFilter(filter);
         deferred.done(function (items) {
             var output = $('.listWrapper', _this.rootElement),
                 html,
