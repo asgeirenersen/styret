@@ -48,6 +48,9 @@ define([
         $('button[name="getPossibleCases"]', this.rootElement).on('click', function () {
             _this.listPossibleCases();
         });
+        $('button[name="getMyCases"]', this.rootElement).on('click', function () {
+            _this.listMyCases();
+        });
     };
     
     /**
@@ -180,8 +183,7 @@ define([
             $('a.edit-list-item', _this.rootElement).on('click', null, function (e) {
                 var clickedElement = $(e.target),
                     tr = clickedElement.closest('tr'),
-                    id = tr.attr('data-id'),
-                    title = $('.caseTitle', tr).text();
+                    id = tr.attr('data-id');
 
                 e.preventDefault();
                 $(_this.parentApp.getRootElement()).trigger('case:editRequested', [id]);

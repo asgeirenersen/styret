@@ -57,10 +57,14 @@
                 this.gapi.client.load('drive', 'v2', function () {
                     window.setTimeout(startApp, 1);
                 });
-            }
+            };
            
             function startApp () {
-                require(['app'], function (App) {
+                require([
+                    'widget/main/main',
+                    'jquery'
+                ], 
+                function (App, $) {
                     var appContainer = $('#appContainer'),
                         config = appConfig[env],
                         app;
@@ -72,7 +76,7 @@
                         });
                     });
                 });
-            }
+            };
         </script>
         <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     </head>

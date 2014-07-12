@@ -4,8 +4,10 @@ define([
     'widget/caselist/CaseList',
     'widget/newcase/NewCase',
     'widget/editcase/EditCase',
-    'jquery'
-], function (AuthorizationManager, CaseList, NewCase, EditCase, $) {
+    'jquery',
+    'handlebars',
+    'text!widget/main/main.html'
+], function (AuthorizationManager, CaseList, NewCase, EditCase, $, Handlebars, mainTemplate) {
     
     /**
      * @param {object} config
@@ -143,16 +145,13 @@ define([
      * @returns {$} The root element containing the DOM fragment for the app.
      */
     App.prototype.buildUI = function () {
-        var menuBar,
-            rootElement;
-        
-        rootElement = $('<div></div>');
-        rootElement.attr('id', this.id);
-        menuBar = $('<div class="navbar navbar-default"></div>');
-        menuBar.append('<div class="navbar-collapse collapse"><ul class="nav navbar-nav"></ul></div>');
-        rootElement.append(menuBar);
-        rootElement.append('<button type="button" class="btn btn-danger authorize-button" style="display: none">Logg inn</button>');
-        
+        var rootElement,
+            html;
+
+        mainTemplate = Handlebars.compile(mainTemplate);
+        html = mainTemplate({"id": this.id});
+        rootElement = $(html);
+
         return rootElement;
     };
     
