@@ -81,8 +81,8 @@ define(['jquery'], function($) {
      */
     FolderManager.prototype.getFoldersByFilter = function (filter) {
         var deferred = $.Deferred(),
-            parentString,
-            ownerString,
+            parentString = '',
+            ownerString = '',
             request,
             filterOK = false,
             i = 1,

@@ -212,7 +212,6 @@ function (cnHelper, $) {
     CaseManager.prototype.getCasesByFilter = function (filter) {
         var deferred,
             parentFolderList = [],
-            ownerList,
             gFilter = {},
             i = 0;
         
@@ -222,10 +221,10 @@ function (cnHelper, $) {
                     this.getFolderIdForStatus(filter['statusList'][i])
                 );
             }
-            gFilter['statusList'] = parentFolderList;
+            gFilter['parentList'] = parentFolderList;
         }
         if (filter['ownerList']) {
-            gFilter['ownerList'] = ownerList;
+            gFilter['ownerList'] = filter['ownerList'];
         }
         deferred = this.folderManager.getFoldersByFilter(gFilter);
         
