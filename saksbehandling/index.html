@@ -17,31 +17,6 @@
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         
         <script type="text/javascript">
-            var clientId = '499338508844.apps.googleusercontent.com',
-                apiKey = 'AIzaSyAjhlvAywXWkoAjVlcIDHp2pfgnOXZpNtw',
-                scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive',
-                folderManager,
-                env = 'dev',
-                appConfig = {};
- 
-            // Live
-            appConfig['live'] = {
-                rootFolder: '0B35WKpVh3VCkZWIyZWYzNzktMzE1OS00NTdlLThiN2ItZTU2ODFhZDRjNTg2',
-                casesFolder: '0B35WKpVh3VCkZWJlNjYyMTEtNzE3NC00NzFiLWI2YWEtNTdjNzdkZmNiZGRi',
-                openCasesFolder: '0B35WKpVh3VCkSlVUQnQ0dUtqN28',
-                closedCasesFolder: '0B35WKpVh3VCkMmFSTG81TU1zMEk',
-                possibleCasesFolder: '0B35WKpVh3VCkYlpCQXN4RlFwUU0'
-            };
-            
-            // Dev
-            appConfig['dev'] = {
-                rootFolder: '0B35WKpVh3VCkUDVqWl9LQW1qWkk',
-                casesFolder: '0B35WKpVh3VCkMDNWaWRyOEpWNkk',
-                openCasesFolder: '0B35WKpVh3VCkc2dxRmNwN0VaMkU',
-                closedCasesFolder: '0B35WKpVh3VCkVkRROGZwRUpKaWM',
-                possibleCasesFolder: '0B35WKpVh3VCkd0dPVTlxRWRoZ0U'
-            };
-
             require.config({
                 baseUrl: 'js',
                 shim: {
@@ -53,23 +28,33 @@
 
             // Use a button to handle authentication the first time.
             function handleClientLoad() {
-                gapi.client.setApiKey(apiKey);
-                this.gapi.client.load('drive', 'v2', function () {
-                    window.setTimeout(startApp, 1);
+                require([
+                    'jquery',
+                    'text!../google_drive_settings.json'
+                ],
+                function ($, settings) {
+                    var cfg = $.parseJSON(settings);
+                    gapi.client.setApiKey(cfg['apiKey']);
+                    this.gapi.client.load('drive', 'v2', function () {
+                        window.setTimeout(
+                            function () {
+                                startApp(cfg, gapi);
+                            }, 1);
+                    });
                 });
             };
            
-            function startApp () {
+            function startApp (cfg, gapi) {
                 require([
                     'widget/main/main',
                     'jquery'
                 ], 
                 function (App, $) {
                     var appContainer = $('#appContainer'),
-                        config = appConfig[env],
+                        config = cfg['folders'],
                         app;
 
-                    app = new App(config, gapi, clientId, appContainer);
+                    app = new App(config, gapi, cfg['clientId'], appContainer);
                     require(['domReady'], function (domReady) {
                         domReady(function () {
                             app.start();
