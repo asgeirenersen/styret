@@ -46,10 +46,16 @@ define([
 
         this.rootElement = this.buildUI();
         this.parentApp.getRootElement().append(this.rootElement);
-        
-        $('button', this.rootElement).on('click', function () {
+
+        $('button.btn-submit', this.rootElement).on('click', function () {
             _this.createCase().done(function () {
                 $(_this.parentApp.getRootElement()).trigger('case:added');
+            });
+        });
+
+        $('button.btn-cancel', this.rootElement).on('click', function () {
+            _this.updateCase().done(function () {
+                $(_this.parentApp.getRootElement()).trigger('case:editCancelled');
             });
         });
     };

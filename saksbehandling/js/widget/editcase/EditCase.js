@@ -16,7 +16,7 @@ define([
     var instance = null;
 
     /**
-     * 
+     *
      * @param {Object} gapi Instance of Google API client
      * @param {object} app
      * @param {object} config
@@ -35,7 +35,7 @@ define([
         this.caseManager = new CaseManager(this.config, this.folderManager);
         this.rootElement;
     };
-    
+
     /**
      * Initializes the widget.
      * Must be called before using the widget.
@@ -47,21 +47,28 @@ define([
 
         this.rootElement = this.buildUI();
         this.parentApp.getRootElement().append(this.rootElement);
-        
-        $('button', this.rootElement).on('click', function () {
+
+        $('button.btn-submit', this.rootElement).on('click', function () {
             _this.updateCase().done(function () {
                 $(_this.parentApp.getRootElement()).trigger('case:edited');
             });
         });
+
+        $('button.btn-cancel', this.rootElement).on('click', function () {
+            _this.updateCase().done(function () {
+                $(_this.parentApp.getRootElement()).trigger('case:editCancelled');
+            });
+        });
     };
-    
+
     EditCase.prototype.populate = function (folderId) {
-        var deferred = this.caseManager.getCaseByFolderId(folderId);
+        var deferred = this.caseManager.getCaseByFolderId(folderId),
+            _this = this;
         this.folderId = folderId;
         deferred.done(function (resp) {
-            $('input[name="title"]', this.rootElement).val(resp['title']);
-            //$('input[name="description"]', this.rootElement).val(resp['description']);
-            $('input[name="status"]', this.rootElement).val([resp['status']]);
+            var theCase = _this.caseManager.getPopulatedCaseFromFolder(resp);
+            $('input[name="title"]', _this.rootElement).val(theCase['title']);
+            $('input[name="status"]', _this.rootElement).val([theCase['status']]);
         });
     };
 
@@ -73,7 +80,7 @@ define([
     EditCase.prototype.show = function () {
         this.rootElement.css('display', 'block');
     };
-    
+
     /**
      * Hides the widget.
      *
@@ -82,7 +89,7 @@ define([
     EditCase.prototype.hide = function () {
         this.rootElement.css('display', 'none');
     };
-    
+
     /**
      * Creates and saves a new case.
      * @returns {Deferred}
@@ -98,7 +105,7 @@ define([
 
         return deferred;
     };
-    
+
     /**
      * Builds the widget UI.
      *
@@ -122,6 +129,6 @@ define([
 
         return rootElement;
     };
-    
+
     return EditCase;
 });

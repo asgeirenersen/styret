@@ -111,17 +111,7 @@ define([
      * @param {string} title
      */
     App.prototype.addWidget = function (widget, title) {
-        var _this = this,
-            link = $('<a href="#">' + title + '</a>'),
-            item = $('<li></li>').append(link);
-            
         this.widgets.push(widget);
-        link.on('click', widget, function () {
-            _this.switchToWidget(widget);
-        });
-        this.widgets.push(widget);
-        
-        $('ul.nav', this.rootElement).append(item);
     };
     
     /**
@@ -166,20 +156,28 @@ define([
                 _this.addWidgets();
             });
         });
-        
+
         $(this.rootElement).on('case:added', function (event) {
             _this.switchToWidget(_this.caseList);
             _this.caseList.listOpenCases();
         });
-        
+
         $(this.rootElement).on('case:editRequested', function (event, id) {
             _this.switchToWidget(_this.editCase);
             _this.editCase.populate(id);
         }); 
-        
+
         $(this.rootElement).on('case:edited', function (event, id) {
             _this.switchToWidget(_this.caseList);
             _this.caseList.listOpenCases();
+        });
+
+        $(this.rootElement).on('case:newRequested', function (event) {
+            _this.switchToWidget(_this.newCase);
+        });
+
+        $(this.rootElement).on('case:editCancelled', function (event) {
+            _this.switchToWidget(_this.caseList);
         }); 
     };
     

@@ -7,12 +7,13 @@
             </label>
         </div>
         <div class="form-group">
-            <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.open}}" checked> Åpen</label>
+            <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.open}}" checked="checked"> Åpen</label>
             <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.closed}}"> Lukket</label>
             <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.possible}}"> Kanskje</label>
         </div>
         <div>
-            <button type="button" class="btn btn-sm btn-primary">Lagre</button>
+            <button type="button" class="btn btn-sm btn-primary btn-submit">Lagre</button>
+            <button type="button" class="btn btn-sm btn-default btn-cancel">Avbryt</button>
         </div>
     </form>
 </div>

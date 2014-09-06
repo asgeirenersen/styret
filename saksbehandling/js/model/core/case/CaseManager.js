@@ -1,8 +1,9 @@
 define([
     'model/core/case/CaseNumberHelper',
+    'model/core/case/Case',
     'jquery'
 ],
-function (cnHelper, $) {
+function (cnHelper, Case, $) {
 
     /**
      * Constructor method.
@@ -24,7 +25,7 @@ function (cnHelper, $) {
     CaseManager.prototype.statusPossible = 'possible';
     CaseManager.prototype.statusOpen = 'open';
     CaseManager.prototype.statusClosed = 'closed';
-    
+
     /**
      * Creates a Case on the back end.
      *
@@ -56,7 +57,22 @@ function (cnHelper, $) {
 
         return retVal;
     };
-    
+
+    CaseManager.prototype.getPopulatedCaseFromFolder = function (folder) {
+        var theCase,
+            status = this.getStatusForFolder(folder),
+            caseId = cnHelper.getCaseIdFromString(folder['title']);
+
+        theCase = new Case(
+            caseId,
+            folder['id'],
+            folder['title'],
+            status
+        );
+
+        return theCase;
+    };
+
     /**
      * @param {string} folderId Google folder id
      * @param {string} title
@@ -66,7 +82,7 @@ function (cnHelper, $) {
      */
     CaseManager.prototype.updateCase = function (folderId, title, newStatus) {
         var _this = this,
-            deferred, 
+            deferred,
             retVal = $.Deferred(),
             parentFolderId = this.getFolderIdForStatus(newStatus),
             otherParentFolderIds = this.getFolderIdsForOtherStatuses(newStatus);
@@ -84,7 +100,7 @@ function (cnHelper, $) {
 
         return retVal;
     };
-    
+
     /**
      * Get a case by the id of the main case folder in Google Drive.
      *
@@ -98,13 +114,13 @@ function (cnHelper, $) {
         deferred.done(function (resp) {
             retVal.resolve(resp);
         });
-        
+
         return retVal;
     };
-    
+
     /**
      * Gets the ID of the folder to use for cases with the given status.
-     * 
+     *
      * @param {string} status Google folder id
      * @throws {object}
      * @returns {string}
@@ -114,7 +130,42 @@ function (cnHelper, $) {
             return this.statusFolders[status];
         }
     };
-    
+
+    /**
+     * Gets the status string  for a case folder by looking at the folder's parents.
+     *
+     * @param {string} folderObject FOlder object as returned by Google.
+     * @returns {string}
+     */
+    CaseManager.prototype.getStatusForFolder = function (folder) {
+        var status = null,
+            i = 0,
+            id;
+
+        for (i; i < folder.parents.length; i++) {
+            id = folder.parents[i]['id'];
+            status = this.getStatusNameForFolderId(id);
+        }
+
+        return status;
+    };
+
+    /**
+     * Gets the proper status name for the folderId, if it is the id of one of the case status folders.
+     *
+     * @param {int} folderId
+     * @returns {string}
+     */
+    CaseManager.prototype.getStatusNameForFolderId = function (folderId) {
+        for (var name in this.statusFolders) {
+            if (this.statusFolders[name] === folderId) {
+                return name;
+            }
+        }
+
+        return null;
+    };
+
     /**
      * Gets the highest existing case id for a given year.
      *
@@ -136,7 +187,7 @@ function (cnHelper, $) {
             for (i; i < items.length; i++) {
                 name = items[i]['title'];
                 id = cnHelper.getCaseIdFromString(name);
-                if (cnHelper.validateCaseId(id) && 
+                if (cnHelper.validateCaseId(id) &&
                         parseInt(cnHelper.getYearFromCaseId(id), 10) === year) {
                     caseIds.push(id);
                 }
@@ -146,13 +197,13 @@ function (cnHelper, $) {
             }
             caseIds.sort();
             highestId = caseIds[caseIds.length - 1];
-            
+
             retVal.resolve(highestId);
         });
 
         return retVal;
     };
-    
+
     /**
      * Gets the next available case id for a given year.
      * The id will be a string on the format "YYYY-nnnn".
@@ -163,7 +214,7 @@ function (cnHelper, $) {
     CaseManager.prototype.getNextAvailableCaseIdForYear = function (year) {
         var deferred,
             retVal = $.Deferred();
-    
+
         deferred = this.getHighestCaseId(year);
         deferred.done(function (highestExisting) {
             var num = 0;
@@ -180,7 +231,7 @@ function (cnHelper, $) {
 
         return retVal;
     };
-    
+
     /**
      * Gets all cases with a given status.
      *
@@ -193,10 +244,10 @@ function (cnHelper, $) {
 
         parentFolderId = this.getFolderIdForStatus(status);
         deferred = this.folderManager.getFoldersByParentId(parentFolderId);
-        
+
         return deferred;
     };
-    
+
     /**
      * Gets cases matching a filter object.
      * {
@@ -212,7 +263,7 @@ function (cnHelper, $) {
             parentFolderList = [],
             gFilter = {},
             i = 0;
-        
+
         if (filter['statusList']) {
             for (i; i < filter['statusList'].length; i = i + 1) {
                 parentFolderList.push(
@@ -225,10 +276,10 @@ function (cnHelper, $) {
             gFilter['ownerList'] = filter['ownerList'];
         }
         deferred = this.folderManager.getFoldersByFilter(gFilter);
-        
-        return deferred;  
+
+        return deferred;
     };
-    
+
     /**
      * Gets all existing cases, regardless of status.
      *
@@ -242,10 +293,10 @@ function (cnHelper, $) {
         ids.push(this.getFolderIdForStatus(this.statusClosed));
         ids.push(this.getFolderIdForStatus(this.statusPossible));
         deferred = this.folderManager.getFoldersByParentIds(ids);
-        
+
         return deferred;
     };
-    
+
     /**
      * Gets an array of Google folder ids.
      * These will be the id of the folders for the other statuses than the
@@ -267,12 +318,12 @@ function (cnHelper, $) {
 
         return folderIds;
     };
-    
+
     /**
      * Changes the status of a case.
      * For now, this just means moving the case folder from
      * one parent folder to another.
-     * 
+     *
      * @param {string} id
      * @param {string} fromStatus
      * @param {string} toStatus
@@ -283,7 +334,7 @@ function (cnHelper, $) {
         var _this = this,
             toFolderId = this.getFolderIdForStatus(toStatus),
             fromFolderId = this.getFolderIdForStatus(fromStatus);
-            
+
         this.folderManager.addParent(id, toFolderId)
             .done(function () {
                 _this.folderManager.removeParent(id, fromFolderId)
@@ -294,6 +345,6 @@ function (cnHelper, $) {
             }
         );
     };
- 
+
     return CaseManager;
 });

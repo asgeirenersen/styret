@@ -51,6 +51,10 @@ define([
         $('button[name="getMyCases"]', this.rootElement).on('click', function () {
             _this.listMyCases();
         });
+        $('button[name="newCase"]', this.rootElement).on('click', function () {
+            $(_this.parentApp.getRootElement()).trigger('case:newRequested');
+        });       
+        
     };
     
     /**
