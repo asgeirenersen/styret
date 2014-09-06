@@ -33,7 +33,7 @@ function (cnHelper, $) {
      * @param {string} status
      * @returns {@this;@pro;folderManager@call;createFolder}
      */
-    CaseManager.prototype.createCase = function (title, description, status) {
+    CaseManager.prototype.createCase = function (title, status) {
         var _this = this,
             caseIdDef,
             retVal = $.Deferred(),
@@ -46,7 +46,6 @@ function (cnHelper, $) {
             console.debug(nextId);
             var deferred = _this.folderManager.createFolder(
                 nextId + ' | ' + title,
-                description,
                 folderId
             );
             deferred.done(function (res) {
@@ -65,7 +64,7 @@ function (cnHelper, $) {
      * @param {string} status
      * @returns {@this;@pro;folderManager@call;createFolder}
      */
-    CaseManager.prototype.updateCase = function (folderId, title, description, newStatus) {
+    CaseManager.prototype.updateCase = function (folderId, title, newStatus) {
         var _this = this,
             deferred, 
             retVal = $.Deferred(),
@@ -75,7 +74,6 @@ function (cnHelper, $) {
         deferred = _this.folderManager.updateFolder(
             folderId,
             title,
-            description,
             parentFolderId,
             otherParentFolderIds.join()
         );

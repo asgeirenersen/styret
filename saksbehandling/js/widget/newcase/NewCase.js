@@ -80,7 +80,6 @@ define([
         var deferred;
         deferred = this.caseManager.createCase(
                 $('input[name="title"]', this.rootElement).val(),
-                $('input[name="description"]', this.rootElement).val(),
                 $('input[name="status"]:checked', this.rootElement).val()
         );
 

@@ -168,14 +168,13 @@ define(['jquery'], function($) {
      * @param {string} parentFolderId
      * @returns {Deferred}
      */
-    FolderManager.prototype.createFolder = function (title, description, parentFolderId) {
+    FolderManager.prototype.createFolder = function (title, parentFolderId) {
         var deferred = $.Deferred();
             request = this.gapi.client.drive.files.insert({
                 resource: {
                     title: title,
                     parents: [{id: parentFolderId}],
-                    mimeType: 'application/vnd.google-apps.folder',
-                    description: description
+                    mimeType: 'application/vnd.google-apps.folder'
                 }
             });
         request.execute(function(resp) {
@@ -202,8 +201,7 @@ define(['jquery'], function($) {
                 'addParents': addParents,
                 'removeParents': removeParents,
                 'resource': {
-                    title: title,
-                    description: description
+                    title: title
                 }
             });
         request.execute(function(resp) {

@@ -60,7 +60,7 @@ define([
         this.folderId = folderId;
         deferred.done(function (resp) {
             $('input[name="title"]', this.rootElement).val(resp['title']);
-            $('input[name="description"]', this.rootElement).val(resp['description']);
+            //$('input[name="description"]', this.rootElement).val(resp['description']);
             $('input[name="status"]', this.rootElement).val([resp['status']]);
         });
     };
@@ -92,7 +92,7 @@ define([
         deferred = this.caseManager.updateCase(
                 this.folderId,
                 $('input[name="title"]', this.rootElement).val(),
-                $('input[name="description"]', this.rootElement).val(),
+                //$('input[name="description"]', this.rootElement).val(),
                 $('input[name="status"]:checked', this.rootElement).val()
         );
 

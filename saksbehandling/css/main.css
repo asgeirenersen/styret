@@ -1,0 +1,7 @@
+/*
+    Main styling is based on Bootstrap.
+    This file contains overrides and extras.
+*/
+label.wrapping {
+    width: 100%;
+}
