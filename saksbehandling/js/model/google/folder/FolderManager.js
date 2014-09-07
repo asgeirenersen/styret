@@ -36,7 +36,7 @@ define(['jquery'], function($) {
             request;
 
         request = this.gapi.client.drive.files.list({
-            q: '(mimeType="application/vnd.google-apps.folder") and ("' + id + '" in parents) and (trashed != true)'
+            q: '(mimeType="application/vnd.google-apps.folder") and ("' + id + '" in parents) and (trashed != true) orderby="title"'
         });
         request.execute(function(resp) {
             console.debug(resp);
@@ -54,7 +54,7 @@ define(['jquery'], function($) {
             parentString,
             request,
             i = 1;
-        
+
         parentString = '("' + ids[0] + '" in parents)';
         for (i; i < ids.length; i += 1) {
             parentString += ' or ("' + ids[i] + '" in parents)';
@@ -69,7 +69,7 @@ define(['jquery'], function($) {
         });
         return deferred;
     };
-    
+
     /**
      * Gets folders matching a filter object.
      * {
@@ -86,8 +86,9 @@ define(['jquery'], function($) {
             request,
             filterOK = false,
             i = 1,
-            j = 1;
-        
+            j = 1,
+            _this = this;
+
         if (filter['parentList'] && filter['parentList'].length > 0) {
             filterOK = true;
             parentString = ' and (("' + filter['parentList'][0] + '" in parents)';
@@ -114,11 +115,13 @@ define(['jquery'], function($) {
             q: '(mimeType="application/vnd.google-apps.folder")' + parentString + ownerString + ' and (trashed != true)'
         });
         request.execute(function(resp) {
-            console.debug(resp);
-            deferred.resolve(resp['items']);
+            var folders = resp['items'];
+            _this.sortFolderList(folders, true);
+            deferred.resolve(folders);
         });
+
         return deferred;
-    };    
+    };
 
     /**
      * @param {string} id ID of the folder that needs a parent
@@ -157,7 +160,7 @@ define(['jquery'], function($) {
         });
         return deferred;
     };
-    
+
     /**
      * Creates a new folder.
      * The returned deferred will be resolved with the response object as
@@ -190,11 +193,10 @@ define(['jquery'], function($) {
      * the parameter passed to the callback methods.
      * @param {string} folderId
      * @param {string} title
-     * @param {string} description
      * @param {string} parentFolderId
      * @returns {Deferred}
      */
-    FolderManager.prototype.updateFolder = function (folderId, title, description, addParents, removeParents) {
+    FolderManager.prototype.updateFolder = function (folderId, title, addParents, removeParents) {
         var deferred = $.Deferred(),
             request = this.gapi.client.drive.files.update({
                 'fileId': folderId,
@@ -210,6 +212,20 @@ define(['jquery'], function($) {
         });
         return deferred;
     };
+
+    FolderManager.prototype.sortFolderList = function (list, descending) {
+        if (descending) {
+            list.sort(function (a, b) {
+                return a['title'].localeCompare(b['title']) * -1;
+            });
+        } else {
+            list.sort(function (a, b) {
+                return a['title'].localeCompare(b['title']);
+            });
+        }
+
+        return list;
+    }
 
     return FolderManager;
 });
