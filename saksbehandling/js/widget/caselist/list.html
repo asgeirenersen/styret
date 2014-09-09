@@ -1,9 +1,12 @@
 <div class="table-responsive">
     <table class="table table-striped table-condensed">
-        {{#each items}}
-        <tr data-id="{{id}}">
+        {{#each cases}}
+        <tr data-id="{{folderId}}">
             <td class="caseTitle"><a href="javascript:void(0)" class="edit-list-item">{{title}}</a></td>
-            <td class="rowButtons"></td>
+            <td>{{owner.name}}</td>
+            <td class="rowButtons">
+                <a href="{{url}}" target="_blank">[Åpne mappe]</a>
+            </td>
         </tr>
         {{/each}}
     </table>

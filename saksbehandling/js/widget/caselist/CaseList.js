@@ -29,7 +29,7 @@ define([
         this.caseManager = new CaseManager(this.config, this.folderManager);
         this.rootElement;
     };
-    
+
     /**
      * Initializes the widget.
      * Must be called before using the widget.
@@ -53,10 +53,10 @@ define([
         });
         $('button[name="newCase"]', this.rootElement).on('click', function () {
             $(_this.parentApp.getRootElement()).trigger('case:newRequested');
-        });       
-        
+        });
+
     };
-    
+
     /**
      * Displays the widget.
      *
@@ -65,24 +65,24 @@ define([
     CaseList.prototype.show = function () {
         this.rootElement.css('display', 'block');
     };
-    
+
     /**
      * Hides the widget.
      */
     CaseList.prototype.hide = function () {
         this.rootElement.css('display', 'none');
     };
-    
+
     /**
      * Fetches and diplays a list of all open cases.
      */
     CaseList.prototype.listOpenCases = function () {
         var _this = this,
             listReady = this.listCases(this.caseManager.statusOpen, null);
-        
+
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
-                $(this).append('<a class="closeBtn" href="#">(Lukk)</a>');
+                $(this).append('<a class="closeBtn" href="#">[Lukk]</a>');
             });
 
             $('.closeBtn', _this.rootElement).on('click', null, function (e) {
@@ -101,17 +101,17 @@ define([
             });
         });
     };
-    
+
     /**
      * Fetches and diplays a list of all closed cases.
      */
     CaseList.prototype.listClosedCases = function () {
         var _this = this,
             listReady = this.listCases(this.caseManager.statusClosed, null);
-        
+
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
-                $(this).append('<a class="reopenBtn" href="#">(Gjenåpne)</a>');
+                $(this).append('<a class="reopenBtn" href="#">[Gjenåpne]</a>');
             });
 
             $('.reopenBtn', _this.rootElement).on('click', null, function (e) {
@@ -130,17 +130,17 @@ define([
             });
         });
     };
-    
+
     /**
      * Fetches and diplays a list of all possible cases.
      */
     CaseList.prototype.listPossibleCases = function () {
         var _this = this,
             listReady = this.listCases(this.caseManager.statusPossible, null);
-        
+
         listReady.done(function () {
             $('.rowButtons', _this.rootElement).each(function () {
-                $(this).append('<a class="openBtn" href="#">(Åpne)</a>');
+                $(this).append('<a class="openBtn" href="#">[Åpne]</a>');
             });
 
             $('.openBtn', _this.rootElement).on('click', null, function (e) {
@@ -159,14 +159,14 @@ define([
             });
         });
     };
-    
+
     /**
      * Fetches and diplays a list of all casses owned by user.
      */
     CaseList.prototype.listMyCases = function () {
         this.listCases(this.caseManager.statusOpen, 'asgeir.enersen@styret.hallagerbakken.no');
     };
-    
+
     /**
      * Fetches and diplays a list of all cases with  given parent folder.
      *
@@ -179,7 +179,7 @@ define([
             retVal = $.Deferred(),
             filter = {},
             deferred;
-        
+
         if (status !== null) {
             filter['statusList'] = [status];
         }
@@ -188,19 +188,20 @@ define([
         }
 
         deferred = this.caseManager.getCasesByFilter(filter);
-        deferred.done(function (items) {
+        deferred.done(function (cases) {
             var output = $('.listWrapper', _this.rootElement),
                 html,
-                template;
-            
-            output.empty();   
+                template,
+                i = 0;
+
+            output.empty();
             template = Handlebars.compile(listTemplate);
             html = template({
-                "items": items,
+                "cases": cases,
                 "status": status
             });
             output.append(html);
-            
+
             $('a.edit-list-item', _this.rootElement).on('click', null, function (e) {
                 var clickedElement = $(e.target),
                     tr = clickedElement.closest('tr'),
@@ -209,13 +210,13 @@ define([
                 e.preventDefault();
                 $(_this.parentApp.getRootElement()).trigger('case:editRequested', [id]);
             });
-            
+
             retVal.resolve();
         });
-        
+
         return retVal;
     };
-    
+
     /**
      * Bukds the widget markup.
      *

@@ -5,3 +5,8 @@
 label.wrapping {
     width: 100%;
 }
+
+.rowButtons a {
+    float: right;
+    margin-left: 10px;
+}

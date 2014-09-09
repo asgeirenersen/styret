@@ -1,9 +1,10 @@
 define([
     'model/core/case/CaseNumberHelper',
     'model/core/case/Case',
+    'model/core/user/User',
     'jquery'
 ],
-function (cnHelper, Case, $) {
+function (cnHelper, Case, User, $) {
 
     /**
      * Constructor method.
@@ -61,13 +62,18 @@ function (cnHelper, Case, $) {
     CaseManager.prototype.getPopulatedCaseFromFolder = function (folder) {
         var theCase,
             status = this.getStatusForFolder(folder),
-            caseId = cnHelper.getCaseIdFromString(folder['title']);
+            caseId = cnHelper.getCaseIdFromString(folder['title']),
+            owner = folder.owners[0],
+            user;
 
+        user = new User(owner['emailAddress'], owner['displayName'], owner['picture']['url']);
         theCase = new Case(
             caseId,
             folder['id'],
             folder['title'],
-            status
+            status,
+            user,
+            folder['alternateLink']
         );
 
         return theCase;
@@ -236,14 +242,22 @@ function (cnHelper, Case, $) {
      * Gets all cases with a given status.
      *
      * @param {type} status
-     * @returns {_L5.CaseManager.prototype.getCasesByStatus@pro;folderManager@call;getFoldersByParentId}
+     * @returns {Deferred}
      */
     CaseManager.prototype.getCasesByStatus = function (status) {
-        var deferred,
-            parentFolderId;
+        var deferred = $.Deferred(),
+            parentFolderId,
+            cases = [],
+            _this = this;
 
         parentFolderId = this.getFolderIdForStatus(status);
-        deferred = this.folderManager.getFoldersByParentId(parentFolderId);
+        this.folderManager.getFoldersByParentId(parentFolderId)
+            .then(function (items) {
+                for (i = 0; i < items.length; i++) {
+                    cases[i] = _this.getPopulatedCaseFromFolder(items[i]);
+                }
+                deferred.resolve(cases);
+            });
 
         return deferred;
     };
@@ -259,10 +273,12 @@ function (cnHelper, Case, $) {
      * @returns {Deferred}
      */
     CaseManager.prototype.getCasesByFilter = function (filter) {
-        var deferred,
+        var deferred = $.Deferred(),
             parentFolderList = [],
             gFilter = {},
-            i = 0;
+            i = 0,
+            cases = [],
+            _this = this;
 
         if (filter['statusList']) {
             for (i; i < filter['statusList'].length; i = i + 1) {
@@ -275,7 +291,13 @@ function (cnHelper, Case, $) {
         if (filter['ownerList']) {
             gFilter['ownerList'] = filter['ownerList'];
         }
-        deferred = this.folderManager.getFoldersByFilter(gFilter);
+        this.folderManager.getFoldersByFilter(gFilter)
+            .then(function (items) {
+                for (i = 0; i < items.length; i++) {
+                    cases[i] = _this.getPopulatedCaseFromFolder(items[i]);
+                }
+                deferred.resolve(cases);
+            });
 
         return deferred;
     };
