@@ -64,9 +64,10 @@ function (cnHelper, Case, User, $) {
             status = this.getStatusForFolder(folder),
             caseId = cnHelper.getCaseIdFromString(folder['title']),
             owner = folder.owners[0],
-            user;
+            user,
+            pictureUrl = owner['picture'] ? owner['picture']['url'] : null;
 
-        user = new User(owner['emailAddress'], owner['displayName'], owner['picture']['url']);
+        user = new User(owner['emailAddress'], owner['displayName'], pictureUrl);
         theCase = new Case(
             caseId,
             folder['id'],
