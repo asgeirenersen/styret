@@ -38,6 +38,11 @@ define([], function () {
         return this.url;
     };
 
+    /**
+     * Gets the user that owns the case.
+     *
+     * @returns {User}
+     */
     Case.prototype.getOwner = function () {
         return this.owner;
     };

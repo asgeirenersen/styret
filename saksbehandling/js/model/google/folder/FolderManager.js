@@ -194,18 +194,24 @@ define(['jquery'], function($) {
      * @param {string} folderId
      * @param {string} title
      * @param {string} parentFolderId
+     * @param {string} Id of owner user.
      * @returns {Deferred}
      */
-    FolderManager.prototype.updateFolder = function (folderId, title, addParents, removeParents) {
+    FolderManager.prototype.updateFolder = function (folderId, title, addParents, removeParents, ownerId) {
         var deferred = $.Deferred(),
-            request = this.gapi.client.drive.files.update({
+            resource = {
                 'fileId': folderId,
                 'addParents': addParents,
                 'removeParents': removeParents,
                 'resource': {
                     title: title
                 }
-            });
+            },
+            request;
+        if (ownerId) {
+            resource['resource']['properties'] = {'caseOwner': ownerId};
+        }
+        request = this.gapi.client.drive.files.update(resource);
         request.execute(function(resp) {
             console.debug(resp);
             deferred.resolve(resp);

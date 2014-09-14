@@ -85,9 +85,10 @@ function (cnHelper, Case, User, $) {
      * @param {string} title
      * @param {string} description
      * @param {string} status
+     * @param {string} ownerId Id (e-mail) of the owner user.
      * @returns {@this;@pro;folderManager@call;createFolder}
      */
-    CaseManager.prototype.updateCase = function (folderId, title, newStatus) {
+    CaseManager.prototype.updateCase = function (folderId, title, newStatus, ownerId) {
         var _this = this,
             deferred,
             retVal = $.Deferred(),
@@ -98,7 +99,8 @@ function (cnHelper, Case, User, $) {
             folderId,
             title,
             parentFolderId,
-            otherParentFolderIds.join()
+            otherParentFolderIds.join(),
+            ownerId
         );
         deferred.done(function (res) {
             console.debug(res);

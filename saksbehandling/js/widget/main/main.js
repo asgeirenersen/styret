@@ -4,25 +4,27 @@ define([
     'widget/caselist/CaseList',
     'widget/newcase/NewCase',
     'widget/editcase/EditCase',
+    'model/core/user/UserManager',
     'jquery',
     'handlebars',
     'text!widget/main/main.html'
-], function (AuthorizationManager, CaseList, NewCase, EditCase, $, Handlebars, mainTemplate) {
-    
+], function (AuthorizationManager, CaseList, NewCase, EditCase, UserManager, $, Handlebars, mainTemplate) {
+
     /**
      * @param {object} config
      * @param {gapi} gapi Google api client
      * @param {string} clientId Google API client id
      * @param {$} wrapperElement The element where this app will inject itself
      */
-    var App = function (config, gapi, clientId, wrapperElement) {
+    var App = function (config, users, gapi, clientId, wrapperElement) {
         this.widgets = [];
         this.caseList;
         this.newCase;
         this.editCase;
+        this.userManager = new UserManager(users);
         this.gapi = gapi;
         this.clientId = clientId;
-        this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive';
+        this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/admin.directory.user';
         this.am = new AuthorizationManager(gapi, clientId);
         this.config = config;
         this.wrapperElement = wrapperElement;
@@ -31,21 +33,21 @@ define([
         this.wrapperElement.append(this.rootElement);
         this.addListeners();
     };
-    
+
     /**
      * Authorizes and adds the widgets.
      */
     App.prototype.start = function () {
         var _this = this,
             deferred = this.authorize(false);
-        
+
         deferred.done(function () {
             _this.addWidgets();
         });
     };
-    
+
     /**
-     * 
+     *
      * @param {boolean} userInitiated Is the authorization triggered by a user action?
      * @returns {Deferred}
      */
@@ -53,7 +55,7 @@ define([
         var _this = this,
             result = $.Deferred(),
             deferred = this.am.authorize(this.scopes, !userInitiated);
-        
+
         deferred.done(function (loggedIn) {
             if (!loggedIn) {
                 console.log('Auth failed!');
@@ -65,24 +67,24 @@ define([
                 result.resolve(true);
             }
         });
-        
+
         return result;
     };
-    
+
     /**
      * Show the login button.
      */
     App.prototype.showLogin = function () {
         $('.authorize-button', this.rootElement).css('display', 'block');
     };
-    
+
     /**
      * Hide the login button.
      */
     App.prototype.hideLogin = function () {
         $('.authorize-button', this.rootElement).css('display', 'none');
     };
-    
+
     /**
      * Adds all available widgets to the menu.
      */
@@ -90,33 +92,33 @@ define([
         this.caseList = new CaseList(this.gapi, this, this.config);
         this.caseList.init();
         this.addWidget(this.caseList, 'Saksliste');
-        
-        
+
+
         this.newCase = new NewCase(this.gapi, this, this.config);
         this.newCase.init();
         this.addWidget(this.newCase, 'Ny sak');
 
-        
+
         this.editCase = new EditCase(this.gapi, this, this.config);
         this.editCase.init();
         this.addWidget(this.editCase, '');
-        
+
         this.switchToWidget(this.caseList);
     };
-    
+
     /**
      * Adds a widget to the app, and creates a link to it on the menu bar.
-     * 
+     *
      * @param {Object} widget
      * @param {string} title
      */
     App.prototype.addWidget = function (widget, title) {
         this.widgets.push(widget);
     };
-    
+
     /**
      * Displays the specified widget and closes the currently active one.
-     * 
+     *
      * @param {Object} widget
      */
     App.prototype.switchToWidget = function (widget) {
@@ -128,10 +130,10 @@ define([
         }
         widget.show();
     };
-    
+
     /**
      * Builds the markup for the application.
-     * 
+     *
      * @returns {$} The root element containing the DOM fragment for the app.
      */
     App.prototype.buildUI = function () {
@@ -144,7 +146,7 @@ define([
 
         return rootElement;
     };
-    
+
     /**
      * Adds event listeners to the UI elements.
      */
@@ -165,7 +167,7 @@ define([
         $(this.rootElement).on('case:editRequested', function (event, id) {
             _this.switchToWidget(_this.editCase);
             _this.editCase.populate(id);
-        }); 
+        });
 
         $(this.rootElement).on('case:edited', function (event, id) {
             _this.switchToWidget(_this.caseList);
@@ -178,15 +180,15 @@ define([
 
         $(this.rootElement).on('case:editCancelled', function (event) {
             _this.switchToWidget(_this.caseList);
-        }); 
+        });
     };
-    
+
     /**
      * @returns {$} The root element for the app.
      */
     App.prototype.getRootElement = function () {
         return this.rootElement;
     };
-    
+
     return App;
 });

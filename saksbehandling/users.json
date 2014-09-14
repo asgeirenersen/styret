@@ -1,0 +1,11 @@
+{
+    "users": [
+            {"name": "Asgeir", "email": "asgeir.enersen@styret.hallagerbakken.no", "isAdmin": "true", "role": "member"},
+            {"name": "Bjørn Tommy", "email": "bjorn.tommy.tollanes@styret.hallagerbakken.no", "isAdmin": "true", "role": "chairman"},
+            {"name": "Ebba", "email": "ebba.irgens.hylland@styret.hallagerbakken.no", "isAdmin": "false", "role": "member"},
+            {"name": "Geir", "email": "geir.brunsvik@styret.hallagerbakken.no", "isAdmin": "false", "role": "member"},
+            {"name": "Inger", "email": "inger.aguilar@styret.hallagerbakken.no", "isAdmin": "false", "role": "member"},
+            {"name": "Arki Varius", "email": "arkiv@styret.hallagerbakken.no", "isAdmin": "false", "role": "special"}
+        ]
+    
+}

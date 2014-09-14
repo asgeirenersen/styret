@@ -69,6 +69,7 @@ define([
             var theCase = _this.caseManager.getPopulatedCaseFromFolder(resp);
             $('input[name="title"]', _this.rootElement).val(theCase['title']);
             $('input[name="status"]', _this.rootElement).val([theCase['status']]);
+            $('input[name="caseOwner"]', _this.rootElement).val([theCase['owner']['id']]);
         });
     };
 
@@ -100,7 +101,9 @@ define([
                 this.folderId,
                 $('input[name="title"]', this.rootElement).val(),
                 //$('input[name="description"]', this.rootElement).val(),
-                $('input[name="status"]:checked', this.rootElement).val()
+                $('input[name="status"]:checked', this.rootElement).val(),
+                $('select[name="caseOwner"]', this.rootElement).val()
+
         );
 
         return deferred;
@@ -123,7 +126,8 @@ define([
                 "open": this.caseManager.statusOpen,
                 "closed": this.caseManager.statusClosed,
                 "possible": this.caseManager.statusPossible
-            }
+            },
+            "users": this.parentApp.userManager.getAllUsers()
         });
         rootElement = $(html);
 

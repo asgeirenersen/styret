@@ -31,21 +31,23 @@
             function handleClientLoad() {
                 require([
                     'jquery',
-                    'text!../google_drive_settings.json'
+                    'text!../google_drive_settings.json',
+                    'text!../users.json'
                 ],
-                function ($, settings) {
-                    var cfg = $.parseJSON(settings);
+                function ($, settings, usersJson) {
+                    var cfg = $.parseJSON(settings),
+                        users = $.parseJSON(usersJson).users;
                     gapi.client.setApiKey(cfg['apiKey']);
                     this.gapi.client.load('drive', 'v2', function () {
                         window.setTimeout(
                             function () {
-                                startApp(cfg, gapi);
+                                startApp(cfg, users, gapi);
                             }, 1);
                     });
                 });
             };
            
-            function startApp (cfg, gapi) {
+            function startApp (cfg, users, gapi) {
                 require([
                     'widget/main/main',
                     'jquery'
@@ -55,7 +57,7 @@
                         config = cfg['folders'],
                         app;
 
-                    app = new App(config, gapi, cfg['clientId'], appContainer);
+                    app = new App(config, users, gapi, cfg['clientId'], appContainer);
                     require(['domReady'], function (domReady) {
                         domReady(function () {
                             app.start();
