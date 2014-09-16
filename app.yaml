@@ -1,0 +1,15 @@
+application: test-hallagerbakken
+version: 1
+runtime: php
+api_version: 1
+
+handlers:
+- url: /saksbehandling/
+  static_files: saksbehandling/index.html
+  upload: saksbehandling/index\.html
+
+- url: /saksbehandling
+  static_dir: saksbehandling
+
+- url: /.*
+  script: helloworld.php
