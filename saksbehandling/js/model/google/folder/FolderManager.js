@@ -199,19 +199,32 @@ define(['jquery'], function($) {
      */
     FolderManager.prototype.updateFolder = function (folderId, title, addParents, removeParents, ownerId) {
         var deferred = $.Deferred(),
-            resource = {
-                'fileId': folderId,
-                'addParents': addParents,
-                'removeParents': removeParents,
-                'resource': {
-                    title: title
-                }
-            },
+            properties = [],
+            caseOwnerProperty,
+            body,
             request;
+
+        body = {
+            'fileId': folderId,
+            'addParents': addParents,
+            'removeParents': removeParents,
+            'resource': {
+                'title': title,
+                'properties': properties
+            }
+        };
+
         if (ownerId) {
-            resource['resource']['properties'] = {'caseOwner': ownerId};
+            caseOwnerProperty = {
+                'key': 'caseOwner',
+                'value': ownerId,
+                'visibility': 'public',
+                'type': 'drive#property'
+            };
+            properties[0] = caseOwnerProperty;
+            body['resource']['properties'] = properties;
         }
-        request = this.gapi.client.drive.files.update(resource);
+        request = this.gapi.client.drive.files.update(body);
         request.execute(function(resp) {
             console.debug(resp);
             deferred.resolve(resp);
