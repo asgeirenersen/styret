@@ -100,7 +100,6 @@ define([
         deferred = this.caseManager.updateCase(
                 this.folderId,
                 $('input[name="title"]', this.rootElement).val(),
-                //$('input[name="description"]', this.rootElement).val(),
                 $('input[name="status"]:checked', this.rootElement).val(),
                 $('select[name="caseOwner"]', this.rootElement).val()
 
