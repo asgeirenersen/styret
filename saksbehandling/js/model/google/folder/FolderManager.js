@@ -214,7 +214,7 @@ define(['jquery'], function($) {
             }
         };
 
-        if (ownerId) {
+        if (ownerId !== null) {
             caseOwnerProperty = {
                 'key': 'caseOwner',
                 'value': ownerId,
@@ -224,12 +224,29 @@ define(['jquery'], function($) {
             properties[0] = caseOwnerProperty;
             body['resource']['properties'] = properties;
         }
+
         request = this.gapi.client.drive.files.update(body);
         request.execute(function(resp) {
             console.debug(resp);
             deferred.resolve(resp);
         });
         return deferred;
+    };
+
+    FolderManager.prototype.getPropertyFromFolder = function (folder, name) {
+        var props = folder['properties'],
+            i = 0;
+        if (!props) {
+            return null;
+        }
+
+        for (i; i < props.length; i++) {
+            if (props[i]['key'] === name) {
+                return props[i];
+            }
+        }
+
+        return null;
     };
 
     FolderManager.prototype.sortFolderList = function (list, descending) {

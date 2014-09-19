@@ -1,10 +1,9 @@
 define([
     'model/core/case/CaseNumberHelper',
     'model/core/case/Case',
-    'model/core/user/User',
     'jquery'
 ],
-function (cnHelper, Case, User, $) {
+function (cnHelper, Case, $) {
 
     /**
      * Constructor method.
@@ -64,16 +63,23 @@ function (cnHelper, Case, User, $) {
             status = this.getStatusForFolder(folder),
             caseId = cnHelper.getCaseIdFromString(folder['title']),
             owner = folder.owners[0],
-            user,
-            pictureUrl = owner['picture'] ? owner['picture']['url'] : null;
+            ownerEmail,
+            caseOwnerProp;
 
-        user = new User(owner['emailAddress'], owner['displayName'], pictureUrl);
+        caseOwnerProp = this.folderManager.getPropertyFromFolder(folder, 'caseOwner');
+
+        if (caseOwnerProp !== null && caseOwnerProp['value'] !== '') {
+            ownerEmail = caseOwnerProp['value'];
+        } else {
+            ownerEmail = owner['emailAddress'];
+        }
+
         theCase = new Case(
             caseId,
             folder['id'],
             folder['title'],
             status,
-            user,
+            ownerEmail,
             folder['alternateLink']
         );
 
@@ -88,7 +94,7 @@ function (cnHelper, Case, User, $) {
      * @param {string} ownerId Id (e-mail) of the owner user.
      * @returns {@this;@pro;folderManager@call;createFolder}
      */
-    CaseManager.prototype.updateCase = function (folderId, title, newStatus, ownerId) {
+    CaseManager.prototype.updateCase = function (folderId, title, newStatus, ownerEmail) {
         var _this = this,
             deferred,
             retVal = $.Deferred(),
@@ -100,7 +106,7 @@ function (cnHelper, Case, User, $) {
             title,
             parentFolderId,
             otherParentFolderIds.join(),
-            ownerId
+            ownerEmail
         );
         deferred.done(function (res) {
             console.debug(res);

@@ -192,8 +192,12 @@ define([
             var output = $('.listWrapper', _this.rootElement),
                 html,
                 template,
+
                 i = 0;
 
+            for (i; i < cases.length; i++) {
+                cases[i]['owner'] = _this.parentApp.userManager.getUserByEmail(cases[i]['ownerEmail']);
+            }
             output.empty();
             template = Handlebars.compile(listTemplate);
             html = template({

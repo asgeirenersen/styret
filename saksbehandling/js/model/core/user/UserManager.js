@@ -22,5 +22,18 @@ function (User, $) {
         return users;
     };
 
+    UserManager.prototype.getUserByEmail = function (email) {
+        var i = 0;
+
+        for (i; i < this.users.length; i++) {
+            if (this.users[i]['email'] === email) {
+
+                return this.users[i];
+            }
+        }
+
+        return null;
+    };
+
     return UserManager;
 });

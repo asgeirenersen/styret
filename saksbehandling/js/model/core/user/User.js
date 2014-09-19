@@ -1,12 +1,12 @@
 define([], function () {
 
-    var User = function (id, name, pictureUrl) {
-        this.id = id;
+    var User = function (email, name, pictureUrl) {
+        this.email = email
         this.name = name;
         this.pictureUrl = pictureUrl;
     };
 
-    User.prototype.getId = function () {
+    User.prototype.getEmail = function () {
         return this.id;
     };
 

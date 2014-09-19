@@ -69,7 +69,7 @@ define([
             var theCase = _this.caseManager.getPopulatedCaseFromFolder(resp);
             $('input[name="title"]', _this.rootElement).val(theCase['title']);
             $('input[name="status"]', _this.rootElement).val([theCase['status']]);
-            $('input[name="caseOwner"]', _this.rootElement).val([theCase['owner']['id']]);
+            $('input[name="caseOwner"]', _this.rootElement).val([theCase['ownerEmail']]);
         });
     };
 

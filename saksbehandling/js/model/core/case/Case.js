@@ -9,12 +9,12 @@ define([], function () {
      * @param {string} status One of "open", "closed", "possible"
      * @returns {_L1.Case}
      */
-    var Case = function (caseId, folderId, title, status, owner, url) {
+    var Case = function (caseId, folderId, title, status, ownerEmail, url) {
         this.caseId = caseId;
         this.folderId = folderId;
         this.title = title;
         this.status = status;
-        this.owner = owner;
+        this.ownerEmail = ownerEmail;
         this.url = url;
     };
 
@@ -39,13 +39,14 @@ define([], function () {
     };
 
     /**
-     * Gets the user that owns the case.
+     * Gets e-mail address of the case owner.
      *
-     * @returns {User}
+     * @returns {string} E-mail address of the case owner.
      */
-    Case.prototype.getOwner = function () {
+    Case.prototype.getOwnerEmail = function () {
         return this.owner;
     };
+
     return Case;
 });
 
