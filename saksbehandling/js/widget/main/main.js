@@ -175,7 +175,8 @@ define([
         });
 
         $(this.rootElement).on('case:newRequested', function (event) {
-            _this.switchToWidget(_this.newCase);
+            _this.switchToWidget(_this.editCase);
+            _this.editCase.populate();
         });
 
         $(this.rootElement).on('case:editCancelled', function (event) {

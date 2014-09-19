@@ -55,22 +55,32 @@ define([
         });
 
         $('button.btn-cancel', this.rootElement).on('click', function () {
-            _this.updateCase().done(function () {
-                $(_this.parentApp.getRootElement()).trigger('case:editCancelled');
-            });
+            $(_this.parentApp.getRootElement()).trigger('case:editCancelled');
         });
     };
 
     EditCase.prototype.populate = function (folderId) {
-        var deferred = this.caseManager.getCaseByFolderId(folderId),
+        var deferred,
             _this = this;
         this.folderId = folderId;
+        
+        deferred = this.caseManager.getCaseByFolderId(folderId);
         deferred.done(function (resp) {
             var theCase = _this.caseManager.getPopulatedCaseFromFolder(resp);
             $('input[name="title"]', _this.rootElement).val(theCase['title']);
             $('input[name="status"]', _this.rootElement).val([theCase['status']]);
             $('input[name="caseOwner"]', _this.rootElement).val([theCase['ownerEmail']]);
         });
+    };
+    
+    EditCase.prototype.populateNew = function () {
+        var deferred,
+            _this = this;
+        this.folderId = null;
+        
+        $('input[name="title"]', _this.rootElement).val('');
+        $('input[name="status"]', _this.rootElement).val([theCase['status']]);
+        $('input[name="caseOwner"]', _this.rootElement).val([theCase['ownerEmail']]);
     };
 
     /**
@@ -98,11 +108,26 @@ define([
     EditCase.prototype.updateCase = function () {
         var deferred;
         deferred = this.caseManager.updateCase(
-                this.folderId,
-                $('input[name="title"]', this.rootElement).val(),
-                $('input[name="status"]:checked', this.rootElement).val(),
-                $('select[name="caseOwner"]', this.rootElement).val()
+            this.folderId,
+            $('input[name="title"]', this.rootElement).val(),
+            $('input[name="status"]:checked', this.rootElement).val(),
+            $('select[name="caseOwner"]', this.rootElement).val()
+        );
 
+        return deferred;
+    };
+    
+    /**
+     * Creates and saves a new case.
+     *
+     * @returns {Deferred}
+     */
+    EditCase.prototype.createCase = function () {
+        var deferred;
+        deferred = this.caseManager.createCase(
+            $('input[name="title"]', this.rootElement).val(),
+            $('input[name="status"]:checked', this.rootElement).val(),
+            $('select[name="caseOwner"]', this.rootElement).val()
         );
 
         return deferred;
