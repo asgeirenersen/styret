@@ -30,5 +30,29 @@ define(['jquery'], function($) {
         return deferred;
     };
 
+    /**
+     * Retrieves the person profile of the logged in user.
+     *
+     * @returns {Deferred} Resolves with Google person profile.
+     */
+    UserManager.prototype.getMyProfile = function () {
+        var deferred = $.Deferred(),
+            request,
+            _this = this;
+
+        this.gapi.client.load('plus', 'v1', function () {
+            request = _this.gapi.client.plus.people.get({
+                'userId': 'me'
+            });
+
+            request.execute(function(resp) {
+                console.debug(resp);
+                deferred.resolve(resp);
+            });
+        });
+
+        return deferred;
+    };
+
     return UserManager;
 });

@@ -2,13 +2,13 @@
 define([
     'AuthorizationManager',
     'widget/caselist/CaseList',
-    'widget/newcase/NewCase',
     'widget/editcase/EditCase',
     'model/core/user/UserManager',
+    'model/google/user/UserMapper',
     'jquery',
     'handlebars',
     'text!widget/main/main.html'
-], function (AuthorizationManager, CaseList, NewCase, EditCase, UserManager, $, Handlebars, mainTemplate) {
+], function (AuthorizationManager, CaseList, EditCase, UserManager, UserMapper, $, Handlebars, mainTemplate) {
 
     /**
      * @param {object} config
@@ -21,10 +21,11 @@ define([
         this.caseList;
         this.newCase;
         this.editCase;
-        this.userManager = new UserManager(users);
+        this.userMapper = new UserMapper(gapi);
+        this.userManager = new UserManager(users, this.userMapper);
         this.gapi = gapi;
         this.clientId = clientId;
-        this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/admin.directory.user';
+        this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/admin.directory.user https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
         this.am = new AuthorizationManager(gapi, clientId);
         this.config = config;
         this.wrapperElement = wrapperElement;
@@ -93,13 +94,7 @@ define([
         this.caseList.init();
         this.addWidget(this.caseList, 'Saksliste');
 
-
-        this.newCase = new NewCase(this.gapi, this, this.config);
-        this.newCase.init();
-        this.addWidget(this.newCase, 'Ny sak');
-
-
-        this.editCase = new EditCase(this.gapi, this, this.config);
+        this.editCase = new EditCase(this.gapi, this, this.config, this.userManager);
         this.editCase.init();
         this.addWidget(this.editCase, '');
 
@@ -176,7 +171,7 @@ define([
 
         $(this.rootElement).on('case:newRequested', function (event) {
             _this.switchToWidget(_this.editCase);
-            _this.editCase.populate();
+            _this.editCase.populateNew();
         });
 
         $(this.rootElement).on('case:editCancelled', function (event) {

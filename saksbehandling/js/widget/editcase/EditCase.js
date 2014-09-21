@@ -22,7 +22,7 @@ define([
      * @param {object} config
      * @returns {EditCase}
      */
-    var EditCase = function (gapi, app, config) {
+    var EditCase = function (gapi, app, config, userManager) {
         if (instance === null) {
             instance = this;
         }
@@ -31,6 +31,8 @@ define([
         this.config = config;
         this.id = 'EditCase' + new Date().getTime();
         this.folderId = null;
+        this.userManager = userManager;
+        this.currentUser = null;
         this.folderManager = new FolderManager(gapi);
         this.caseManager = new CaseManager(this.config, this.folderManager);
         this.rootElement;
@@ -49,9 +51,16 @@ define([
         this.parentApp.getRootElement().append(this.rootElement);
 
         $('button.btn-submit', this.rootElement).on('click', function () {
-            _this.updateCase().done(function () {
-                $(_this.parentApp.getRootElement()).trigger('case:edited');
-            });
+            if (_this.folderId === null) {
+                _this.createCase().done(function () {
+                    $(_this.parentApp.getRootElement()).trigger('case:added');
+                });
+            } else {
+                _this.updateCase().done(function () {
+                    $(_this.parentApp.getRootElement()).trigger('case:edited');
+                });
+            }
+
         });
 
         $('button.btn-cancel', this.rootElement).on('click', function () {
@@ -63,24 +72,27 @@ define([
         var deferred,
             _this = this;
         this.folderId = folderId;
-        
+
         deferred = this.caseManager.getCaseByFolderId(folderId);
         deferred.done(function (resp) {
             var theCase = _this.caseManager.getPopulatedCaseFromFolder(resp);
             $('input[name="title"]', _this.rootElement).val(theCase['title']);
             $('input[name="status"]', _this.rootElement).val([theCase['status']]);
-            $('input[name="caseOwner"]', _this.rootElement).val([theCase['ownerEmail']]);
+            $('select[name="caseOwner"]', _this.rootElement).val([theCase['ownerEmail']]);
         });
     };
-    
+
     EditCase.prototype.populateNew = function () {
-        var deferred,
-            _this = this;
+        var _this = this;
         this.folderId = null;
-        
-        $('input[name="title"]', _this.rootElement).val('');
-        $('input[name="status"]', _this.rootElement).val([theCase['status']]);
-        $('input[name="caseOwner"]', _this.rootElement).val([theCase['ownerEmail']]);
+
+        this.userManager.getCurrentUser()
+            .done(function (user) {
+                _this.currentUser = user;
+                $('input[name="title"]', _this.rootElement).val('');
+                $('input[name="status"]', _this.rootElement).val([_this.caseManager.statusOpen]);
+                $('select[name="caseOwner"]', _this.rootElement).val([user.email]);
+            });
     };
 
     /**
@@ -116,7 +128,7 @@ define([
 
         return deferred;
     };
-    
+
     /**
      * Creates and saves a new case.
      *

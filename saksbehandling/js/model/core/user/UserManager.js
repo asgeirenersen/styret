@@ -4,8 +4,10 @@ define([
 ],
 function (User, $) {
 
-    UserManager = function (usersStruct) {
+    UserManager = function (usersStruct, userMapper) {
         this.users = this.populateUsers(usersStruct);
+        this.currentUser = null;
+        this.userMapper = userMapper;
     };
 
     UserManager.prototype.getAllUsers = function () {
@@ -33,6 +35,65 @@ function (User, $) {
         }
 
         return null;
+    };
+
+
+    UserManager.prototype.getCurrentUser = function () {
+        var deferred = $.Deferred(),
+            _this = this;
+
+        if (this.currentUser !== null) {
+            deferred.resolve(this.currentUser);
+        } else {
+            this.userMapper.getMyProfile()
+                .done(function (profile) {
+                    var user = _this.getUserFromProfile(profile);
+                    _this.cacheUser(user);
+                    _this.currentUser = user;
+                    deferred.resolve(user);
+                });
+        }
+
+        return deferred;
+    };
+
+    /**
+     * Adds or replaces a user to/in the cache.
+     *
+     * @param {User} user
+     */
+    UserManager.prototype.cacheUser = function (user) {
+        var cachedUser = this.getUserByEmail(user.getEmail());
+
+        if (cachedUser !== null) {
+            cachedUser = user;
+        } else {
+            this.users.push(user);
+        }
+    }
+
+    /**
+     * Creates a user object based on a Google person profile resource
+     *
+     * @param {} profile Google person profile resource
+     * @returns {User}
+     */
+    UserManager.prototype.getUserFromProfile = function (profile) {
+        var email = profile['emails'][0]['value'],
+            pictureUrl = null,
+            user = null;
+
+        if (profile['image']) {
+            pictureUrl = profile['image']['url'];
+        }
+
+        user = new User(
+                email,
+                profile['displayName'],
+                pictureUrl
+            );
+
+        return user;
     };
 
     return UserManager;
