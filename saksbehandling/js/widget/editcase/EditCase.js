@@ -1,18 +1,18 @@
 /**
  * A widget for creating a new case.
  *
- * @param {type} FolderManager
+ * @param {type} FolderMapper
  * @param {type} CaseManager
  * @param {type} $
  * @returns {EditCase}
  */
 define([
-    'model/google/folder/FolderManager',
+    'model/google/folder/FolderMapper',
     'model/core/case/CaseManager',
     'jquery',
     'handlebars',
     'text!widget/editcase/main.html'
-], function (FolderManager, CaseManager, $, Handlebars, mainTemplate) {
+], function (FolderMapper, CaseManager, $, Handlebars, mainTemplate) {
     var instance = null;
 
     /**
@@ -33,8 +33,8 @@ define([
         this.folderId = null;
         this.userManager = userManager;
         this.currentUser = null;
-        this.folderManager = new FolderManager(gapi);
-        this.caseManager = new CaseManager(this.config, this.folderManager);
+        this.folderMapper = new FolderMapper(gapi);
+        this.caseManager = new CaseManager(this.config, this.folderMapper);
         this.rootElement;
     };
 

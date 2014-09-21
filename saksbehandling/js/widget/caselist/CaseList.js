@@ -1,12 +1,12 @@
 
 define([
-    'model/google/folder/FolderManager',
+    'model/google/folder/FolderMapper',
     'model/core/case/CaseManager',
     'jquery',
     'handlebars',
     'text!widget/caselist/list.html',
     'text!widget/caselist/main.html'
-], function (FolderManager, CaseManager, $, Handlebars, listTemplate, mainTemplate) {
+], function (FolderMapper, CaseManager, $, Handlebars, listTemplate, mainTemplate) {
     var instance = null;
 
     /**
@@ -25,8 +25,8 @@ define([
         this.parentApp = app;
         this.config = config;
         this.id = 'CaseList_' + new Date().getTime();
-        this.folderManager = new FolderManager(gapi);
-        this.caseManager = new CaseManager(this.config, this.folderManager);
+        this.folderMapper = new FolderMapper(gapi);
+        this.caseManager = new CaseManager(this.config, this.folderMapper);
         this.rootElement;
     };
 

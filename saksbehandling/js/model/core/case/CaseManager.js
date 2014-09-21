@@ -9,12 +9,12 @@ function (cnHelper, Case, $) {
      * Constructor method.
      *
      * @param {object} config
-     * @param {FolderManager} folderManager
+     * @param {FolderMapper} folderMapper
      * @returns {CaseManager}
      */
-    var CaseManager = function (config, folderManager) {
+    var CaseManager = function (config, folderMapper) {
         this.config = config;
-        this.folderManager = folderManager;
+        this.folderMapper = folderMapper;
         this.statusFolders = {
             'possible': config.possibleCasesFolder,
             'open': config.openCasesFolder,
@@ -32,22 +32,29 @@ function (cnHelper, Case, $) {
      * @param {string} title
      * @param {string} description
      * @param {string} status
-     * @returns {@this;@pro;folderManager@call;createFolder}
+     * @param {string} owenerEmail Primary e-mail of case owner.
+     * @returns {@this;@pro;folderMapper@call;createFolder}
      */
-    CaseManager.prototype.createCase = function (title, status) {
+    CaseManager.prototype.createCase = function (title, status, ownerEmail) {
         var _this = this,
             caseIdDef,
             retVal = $.Deferred(),
             folderId = this.getFolderIdForStatus(status),
-            year;
+            year,
+            props = [];
+
+        if (ownerEmail) {
+            props[0] = this.folderMapper.createProperty('caseOwner', ownerEmail, 'public');
+        }
 
         year = new Date().getFullYear();
         caseIdDef = this.getNextAvailableCaseIdForYear(year);
         caseIdDef.done(function (nextId) {
             console.debug(nextId);
-            var deferred = _this.folderManager.createFolder(
+            var deferred = _this.folderMapper.createFolder(
                 nextId + ' | ' + title,
-                folderId
+                folderId,
+                props
             );
             deferred.done(function (res) {
                 console.debug(res);
@@ -66,7 +73,7 @@ function (cnHelper, Case, $) {
             ownerEmail,
             caseOwnerProp;
 
-        caseOwnerProp = this.folderManager.getPropertyFromFolder(folder, 'caseOwner');
+        caseOwnerProp = this.folderMapper.getPropertyFromFolder(folder, 'caseOwner');
 
         if (caseOwnerProp !== null && caseOwnerProp['value'] !== '') {
             ownerEmail = caseOwnerProp['value'];
@@ -92,21 +99,26 @@ function (cnHelper, Case, $) {
      * @param {string} description
      * @param {string} status
      * @param {string} ownerId Id (e-mail) of the owner user.
-     * @returns {@this;@pro;folderManager@call;createFolder}
+     * @returns {@this;@pro;folderMapper@call;createFolder}
      */
     CaseManager.prototype.updateCase = function (folderId, title, newStatus, ownerEmail) {
         var _this = this,
             deferred,
             retVal = $.Deferred(),
             parentFolderId = this.getFolderIdForStatus(newStatus),
-            otherParentFolderIds = this.getFolderIdsForOtherStatuses(newStatus);
+            otherParentFolderIds = this.getFolderIdsForOtherStatuses(newStatus),
+            props = [];
 
-        deferred = _this.folderManager.updateFolder(
+        if (ownerEmail) {
+            props[0] = this.folderMapper.createProperty('caseOwner', ownerEmail, 'public');
+        }
+
+        deferred = _this.folderMapper.updateFolder(
             folderId,
             title,
             parentFolderId,
             otherParentFolderIds.join(),
-            ownerEmail
+            props
         );
         deferred.done(function (res) {
             console.debug(res);
@@ -124,7 +136,7 @@ function (cnHelper, Case, $) {
      */
     CaseManager.prototype.getCaseByFolderId = function (folderId) {
         var retVal = $.Deferred(),
-            deferred = this.folderManager.getById(folderId);
+            deferred = this.folderMapper.getById(folderId);
 
         deferred.done(function (resp) {
             retVal.resolve(resp);
@@ -260,7 +272,7 @@ function (cnHelper, Case, $) {
             _this = this;
 
         parentFolderId = this.getFolderIdForStatus(status);
-        this.folderManager.getFoldersByParentId(parentFolderId)
+        this.folderMapper.getFoldersByParentId(parentFolderId)
             .then(function (items) {
                 for (i = 0; i < items.length; i++) {
                     cases[i] = _this.getPopulatedCaseFromFolder(items[i]);
@@ -300,7 +312,7 @@ function (cnHelper, Case, $) {
         if (filter['ownerList']) {
             gFilter['ownerList'] = filter['ownerList'];
         }
-        this.folderManager.getFoldersByFilter(gFilter)
+        this.folderMapper.getFoldersByFilter(gFilter)
             .then(function (items) {
                 for (i = 0; i < items.length; i++) {
                     cases[i] = _this.getPopulatedCaseFromFolder(items[i]);
@@ -314,7 +326,7 @@ function (cnHelper, Case, $) {
     /**
      * Gets all existing cases, regardless of status.
      *
-     * @returns {_L5.CaseManager.prototype.getAllCases@pro;folderManager@call;getFoldersByParentIds}
+     * @returns {_L5.CaseManager.prototype.getAllCases@pro;folderMapper@call;getFoldersByParentIds}
      */
     CaseManager.prototype.getAllCases = function () {
         var deferred,
@@ -323,7 +335,7 @@ function (cnHelper, Case, $) {
         ids.push(this.getFolderIdForStatus(this.statusOpen));
         ids.push(this.getFolderIdForStatus(this.statusClosed));
         ids.push(this.getFolderIdForStatus(this.statusPossible));
-        deferred = this.folderManager.getFoldersByParentIds(ids);
+        deferred = this.folderMapper.getFoldersByParentIds(ids);
 
         return deferred;
     };
@@ -366,9 +378,9 @@ function (cnHelper, Case, $) {
             toFolderId = this.getFolderIdForStatus(toStatus),
             fromFolderId = this.getFolderIdForStatus(fromStatus);
 
-        this.folderManager.addParent(id, toFolderId)
+        this.folderMapper.addParent(id, toFolderId)
             .done(function () {
-                _this.folderManager.removeParent(id, fromFolderId)
+                _this.folderMapper.removeParent(id, fromFolderId)
                     .done(function (resp) {
                         console.debug(resp);
                         callback.call(_this);

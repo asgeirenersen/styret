@@ -4,7 +4,7 @@ define(['jquery'], function($) {
     /**
      * @param {Object} gapi Instance of Google API client
      */
-    FolderManager = function (gapi) {
+    FolderMapper = function (gapi) {
         this.gapi = gapi;
     };
 
@@ -13,7 +13,7 @@ define(['jquery'], function($) {
      * @param {string} id ID of the folder
      * @returns {Deferred}
      */
-    FolderManager.prototype.getById = function (id) {
+    FolderMapper.prototype.getById = function (id) {
         var deferred = $.Deferred(),
             request = this.gapi.client.drive.files.get({
         'fileId': id
@@ -31,7 +31,7 @@ define(['jquery'], function($) {
      * @param {string} id ID of parent folder
      * @returns {Deferred}
      */
-    FolderManager.prototype.getFoldersByParentId = function (id) {
+    FolderMapper.prototype.getFoldersByParentId = function (id) {
         var deferred = $.Deferred(),
             request;
 
@@ -49,7 +49,7 @@ define(['jquery'], function($) {
      * @param {string} ids Array of IDs of parent folders
      * @returns {Deferred}
      */
-    FolderManager.prototype.getFoldersByParentIds = function (ids) {
+    FolderMapper.prototype.getFoldersByParentIds = function (ids) {
         var deferred = $.Deferred(),
             parentString,
             request,
@@ -79,7 +79,7 @@ define(['jquery'], function($) {
      * @param {type} filter
      * @returns {Deferred}
      */
-    FolderManager.prototype.getFoldersByFilter = function (filter) {
+    FolderMapper.prototype.getFoldersByFilter = function (filter) {
         var deferred = $.Deferred(),
             parentString = '',
             ownerString = '',
@@ -128,7 +128,7 @@ define(['jquery'], function($) {
      * @param {string} parentId ID of the new parent folder
      * @returns {Deferred}
      */
-    FolderManager.prototype.addParent = function (id, parentId) {
+    FolderMapper.prototype.addParent = function (id, parentId) {
         var deferred = $.Deferred(),
             request = this.gapi.client.drive.parents.insert({
                 fileId: id,
@@ -148,7 +148,7 @@ define(['jquery'], function($) {
      * @param {string} parentId ID of the former parent folder
      * @returns {Deferred}
      */
-    FolderManager.prototype.removeParent = function (id, parentId) {
+    FolderMapper.prototype.removeParent = function (id, parentId) {
         var deferred = $.Deferred(),
             request = this.gapi.client.drive.parents.delete({
                 parentId: parentId,
@@ -169,21 +169,30 @@ define(['jquery'], function($) {
      * @param {string} title
      * @param {string} description
      * @param {string} parentFolderId
+     * @param {array}  Array of Google drive#property
      * @returns {Deferred}
      */
-    FolderManager.prototype.createFolder = function (title, parentFolderId) {
-        var deferred = $.Deferred();
-            request = this.gapi.client.drive.files.insert({
-                resource: {
-                    title: title,
-                    parents: [{id: parentFolderId}],
-                    mimeType: 'application/vnd.google-apps.folder'
-                }
-            });
+    FolderMapper.prototype.createFolder = function (title, parentFolderId, props) {
+        var deferred = $.Deferred(),
+            request,
+            res = {
+                title: title,
+                parents: [{id: parentFolderId}],
+                mimeType: 'application/vnd.google-apps.folder'
+            };
+
+        if (props !== null) {
+            res['properties'] = props;
+        }
+
+        request = this.gapi.client.drive.files.insert({
+            resource: res
+        });
         request.execute(function(resp) {
             console.debug(resp);
             deferred.resolve(resp);
         });
+
         return deferred;
     };
 
@@ -194,13 +203,12 @@ define(['jquery'], function($) {
      * @param {string} folderId
      * @param {string} title
      * @param {string} parentFolderId
-     * @param {string} Id of owner user.
+     * @param {array}  Array of Google drive#property
      * @returns {Deferred}
      */
-    FolderManager.prototype.updateFolder = function (folderId, title, addParents, removeParents, ownerId) {
+    FolderMapper.prototype.updateFolder = function (folderId, title, addParents, removeParents, props) {
         var deferred = $.Deferred(),
             properties = [],
-            caseOwnerProperty,
             body,
             request;
 
@@ -214,15 +222,8 @@ define(['jquery'], function($) {
             }
         };
 
-        if (ownerId !== null) {
-            caseOwnerProperty = {
-                'key': 'caseOwner',
-                'value': ownerId,
-                'visibility': 'public',
-                'type': 'drive#property'
-            };
-            properties[0] = caseOwnerProperty;
-            body['resource']['properties'] = properties;
+        if (props !== null) {
+            body['resource']['properties'] = props;
         }
 
         request = this.gapi.client.drive.files.update(body);
@@ -233,7 +234,7 @@ define(['jquery'], function($) {
         return deferred;
     };
 
-    FolderManager.prototype.getPropertyFromFolder = function (folder, name) {
+    FolderMapper.prototype.getPropertyFromFolder = function (folder, name) {
         var props = folder['properties'],
             i = 0;
         if (!props) {
@@ -249,7 +250,18 @@ define(['jquery'], function($) {
         return null;
     };
 
-    FolderManager.prototype.sortFolderList = function (list, descending) {
+    FolderMapper.prototype.createProperty = function (key, value, visibility) {
+            var prop = {
+                'key': key,
+                'value': value,
+                'visibility': visibility ? visibility : 'public',
+                'type': 'drive#property'
+            }
+
+            return prop;
+    };
+
+    FolderMapper.prototype.sortFolderList = function (list, descending) {
         if (descending) {
             list.sort(function (a, b) {
                 return a['title'].localeCompare(b['title']) * -1;
@@ -263,5 +275,5 @@ define(['jquery'], function($) {
         return list;
     }
 
-    return FolderManager;
+    return FolderMapper;
 });
