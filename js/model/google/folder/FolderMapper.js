@@ -83,6 +83,7 @@ define(['jquery'], function($) {
         var deferred = $.Deferred(),
             parentString = '',
             ownerString = '',
+            caseOwnerString = '',
             request,
             filterOK = false,
             i = 1,
@@ -107,12 +108,17 @@ define(['jquery'], function($) {
             ownerString += ')';
         }
 
+        if (filter['caseOwner']) {
+            filterOK = true;
+            caseOwnerString = " and (properties has {key='caseOwner' and value='" + filter['caseOwner'] + "' and visibility='PUBLIC'})";
+        }
+
         if (!filterOK) {
             throw new Error( "Filter must specify at least one owner or parent." );
         }
 
         request = this.gapi.client.drive.files.list({
-            q: '(mimeType="application/vnd.google-apps.folder")' + parentString + ownerString + ' and (trashed != true)'
+            q: '(mimeType="application/vnd.google-apps.folder")' + parentString + ownerString + caseOwnerString + ' and (trashed != true)'
         });
         request.execute(function(resp) {
             var folders = resp['items'];

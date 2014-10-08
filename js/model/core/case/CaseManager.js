@@ -309,8 +309,8 @@ function (cnHelper, Case, $) {
             }
             gFilter['parentList'] = parentFolderList;
         }
-        if (filter['ownerList']) {
-            gFilter['ownerList'] = filter['ownerList'];
+        if (filter['ownerList'] && filter['ownerList'].length > 0) {
+            gFilter['caseOwner'] = filter['ownerList'][0];
         }
         this.folderMapper.getFoldersByFilter(gFilter)
             .then(function (items) {
