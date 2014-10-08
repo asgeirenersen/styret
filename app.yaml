@@ -4,12 +4,15 @@ runtime: php
 api_version: 1
 
 handlers:
-- url: /saksbehandling/
-  static_files: saksbehandling/index.html
-  upload: saksbehandling/index\.html
 
-- url: /saksbehandling
-  static_dir: saksbehandling
+- url: /
+  static_files: index.html
+  upload: index\.html
 
-- url: /.*
-  script: helloworld.php
+- url: /(.+)$
+  static_files: \1
+  upload: .*
+    
+
+
+
