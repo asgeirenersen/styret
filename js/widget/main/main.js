@@ -16,7 +16,7 @@ define([
      * @param {string} clientId Google API client id
      * @param {$} wrapperElement The element where this app will inject itself
      */
-    var App = function (config, users, gapi, clientId, wrapperElement) {
+    var App = function (config, users, gapi, clientId, apiKey, wrapperElement) {
         this.widgets = [];
         this.caseList;
         this.newCase;
@@ -25,8 +25,9 @@ define([
         this.userManager = new UserManager(users, this.userMapper);
         this.gapi = gapi;
         this.clientId = clientId;
+        this.apiKey = apiKey;
         this.scopes = 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/admin.directory.user https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
-        this.am = new AuthorizationManager(gapi, clientId);
+        this.am = new AuthorizationManager(gapi, clientId, apiKey);
         this.config = config;
         this.wrapperElement = wrapperElement;
         this.id = 'App_' + new Date().getTime();
@@ -45,6 +46,10 @@ define([
         deferred.done(function () {
             _this.addWidgets();
         });
+    };
+
+    App.prototype.getAuthorizationManager = function() {
+        return this.am;
     };
 
     /**

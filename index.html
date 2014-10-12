@@ -54,10 +54,10 @@
                 ], 
                 function (App, $) {
                     var appContainer = $('#appContainer'),
-                        config = cfg['folders'],
+                        folderIds = cfg['folders'],
                         app;
 
-                    app = new App(config, users, gapi, cfg['clientId'], appContainer);
+                    app = new App(folderIds, users, gapi, cfg['clientId'], cfg['apiKey'], appContainer);
                     require(['domReady'], function (domReady) {
                         domReady(function () {
                             app.start();

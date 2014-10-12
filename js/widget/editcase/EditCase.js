@@ -9,10 +9,11 @@
 define([
     'model/google/folder/FolderMapper',
     'model/core/case/CaseManager',
+    'widget/picker/PickerFactory',
     'jquery',
     'handlebars',
     'text!widget/editcase/main.html'
-], function (FolderMapper, CaseManager, $, Handlebars, mainTemplate) {
+], function (FolderMapper, CaseManager, PickerFactory, $, Handlebars, mainTemplate) {
     var instance = null;
 
     /**
@@ -28,6 +29,7 @@ define([
         }
         this.gapi = gapi;
         this.parentApp = app;
+        this.am = app.getAuthorizationManager();
         this.config = config;
         this.id = 'EditCase' + new Date().getTime();
         this.folderId = null;
@@ -35,6 +37,7 @@ define([
         this.currentUser = null;
         this.folderMapper = new FolderMapper(gapi);
         this.caseManager = new CaseManager(this.config, this.folderMapper);
+        this.pickerFactory;
         this.rootElement;
     };
 
@@ -63,9 +66,19 @@ define([
 
         });
 
+        new PickerFactory(this.am).done(function (pickerFactory) {
+            var picker = pickerFactory.build();
+
+            $('button.addFile', this.rootElement).on('click', function () {
+                picker.setVisible(true);
+            });
+        });
+
         $('button.btn-cancel', this.rootElement).on('click', function () {
             $(_this.parentApp.getRootElement()).trigger('case:editCancelled');
         });
+
+
     };
 
     EditCase.prototype.populate = function (folderId) {

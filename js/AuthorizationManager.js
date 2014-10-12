@@ -10,9 +10,11 @@ define([
      * @param {string} clientId
      * @returns (AuthorizationManager}
      */
-    var AuthorizationManager = function (gapi, clientId) {
+    var AuthorizationManager = function (gapi, clientId, apiKey) {
         this.clientId = clientId;
         this.gapi = gapi;
+        this.apiKey = apiKey;
+        this.oauthToken;
     };
 
     /**
@@ -22,17 +24,19 @@ define([
      * @returns {Deferred}
      */
     AuthorizationManager.prototype.authorize = function (scopes, immediate) {
-        var deferred = $.Deferred();
+        var deferred = $.Deferred(),
+            _this = this;
         this.gapi.auth.authorize({client_id: this.clientId, scope: scopes, immediate: immediate}, function (authResult) {
             var retVal = false;
             if (authResult && !authResult.error) {
                 retVal = true;
+                _this.oauthToken = authResult.access_token
             }
             deferred.resolve(retVal);
         });
 
         return deferred;
     }
-    
+
     return AuthorizationManager;
 });
