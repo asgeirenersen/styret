@@ -7,12 +7,14 @@
             </label>
         </div>
         <div class="form-group">
-            <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.open}}"> Åpen</label>
-            <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.closed}}"> Lukket</label>
-            <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.possible}}"> Kanskje</label>
+            <label>Status<br>
+                <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.open}}"> Åpen</label>
+                <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.closed}}"> Lukket</label>
+                <label class="radio-inline"><input type="radio" name="status" value="{{statusNames.possible}}"> Kanskje</label>
+            </label>
         </div>
         <div class="form-group">
-            <label>
+            <label>Sakseier<br>
                 <select name="caseOwner">
                     {{#each users}}
                     <option value="{{this.email}}">{{this.name}}</option>
@@ -25,7 +27,21 @@
             <button type="button" class="btn btn-sm btn-default btn-cancel">Avbryt</button>
         </div>
     </form>
-    <form name="addFile" role="form">
-        <button type="button" class="btn btn-sm addFile">Legg til fil</button>
-    </form>
+    <br>
+    <div>
+        <form name="addFile" role="form">
+            <button type="button" class="btn btn-sm addFile">Legg til fil</button>
+        </form>
+    </div>
+    <div class="fileList">
+        <ul>
+            {{#each folders}}
+            <li>{{this.name}}</li>
+            {{/each}}
+            {{#each files}}
+            <li>{{this.name}}</li>
+            {{/each}}
+            
+        </ul>
+    </div>
 </div>
