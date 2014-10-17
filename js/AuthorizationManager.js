@@ -3,6 +3,14 @@ define([
     'jquery'
 ], function ($) {
 
+    var scopes = [
+            'https://www.googleapis.com/auth/plus.me',
+            'https://www.googleapis.com/auth/drive',
+            'https://www.googleapis.com/auth/admin.directory.user',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/userinfo.profile'
+        ],
+
     /**
      * Constructor method.
      *
@@ -10,7 +18,7 @@ define([
      * @param {string} clientId
      * @returns (AuthorizationManager}
      */
-    var AuthorizationManager = function (gapi, clientId, apiKey) {
+    AuthorizationManager = function (gapi, clientId, apiKey) {
         this.clientId = clientId;
         this.gapi = gapi;
         this.apiKey = apiKey;
@@ -23,7 +31,7 @@ define([
      * @param {boolean} immediate
      * @returns {Deferred}
      */
-    AuthorizationManager.prototype.authorize = function (scopes, immediate) {
+    AuthorizationManager.prototype.authorize = function (immediate) {
         var deferred = $.Deferred(),
             _this = this;
         this.gapi.auth.authorize({client_id: this.clientId, scope: scopes, immediate: immediate}, function (authResult) {
