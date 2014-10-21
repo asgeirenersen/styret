@@ -100,7 +100,8 @@
         <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     </head>
     <body role="document">
-        <div class="container" role="main">
+        <div id="main" class="container" role="main">
+            <h1 class="h4">Saksliste</h1>
             <case-list ng-controller="caseListController as cl"></case-list>
             <login-button ng-controller="loginController"></login-button>
         </div>

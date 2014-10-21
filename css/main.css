@@ -10,3 +10,13 @@ label.wrapping {
     float: right;
     margin-left: 10px;
 }
+
+.small-icon {
+    width: 14px;
+    height: 14px;
+}
+
+#main {
+    margin-top: 10px;
+}
+

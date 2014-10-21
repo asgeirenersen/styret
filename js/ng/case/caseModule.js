@@ -3,13 +3,10 @@
 (function(){
     angular.module('case', ['app', 'login'])
         .controller('caseListController', ['caseService', function(caseService){
-            var _this = this;
-
             this.data = caseService.data;
-
+            this.statusFilter = 'open';
             this.updateCases = function() {
                 caseService.getCases().then(function(result){
-                    var x = _this;
                     console.log(result);
                 });
             };

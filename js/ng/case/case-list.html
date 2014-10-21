@@ -1,7 +1,20 @@
-<button ng-click="cl.updateCases()">Update cases</button>
 <div class="table-responsive" ng-show="loggedIn" ng-init="cl.updateCases()">
+    <div class="form-group pull-left">
+        <label class="radio-inline"><input type="radio" ng-model="cl.statusFilter" value="open" checked="checked"> Åpen</label>
+        <label class="radio-inline"><input type="radio" ng-model="cl.statusFilter" value="closed"> Lukket</label>
+        <label class="radio-inline"><input type="radio" ng-model="cl.statusFilter" value="possible"> Kanskje</label>
+    </div>
+    <div class="pull-right">
+        <input type="image" src="gfx/icons/reload.svg" class="small-icon" alt="Oppdater listen" ng-click="cl.updateCases()">
+    </div>
     <table class="table table-striped table-condensed">
-        <tr data-id="{{case.id}}" ng-repeat="case in cl.data.cases">
+        <tr>
+            <th>Tittel</th>
+            <th>Status</th>
+            <th>Ansvarlig</th>
+            <th>Saksmappe</th>
+        </tr>
+        <tr data-id="{{case.id}}" ng-repeat="case in cl.data.cases | filter:{'status': cl.statusFilter}">
             <td class="caseTitle"><a href="javascript:void(0)" class="edit-list-item">{{case.title}}</a></td>
             <td>{{case.status}}</td>
             <td>{{case.owners[0].displayName}}</td>
