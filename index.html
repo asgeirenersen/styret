@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<html>
     <head>
         <title>Saksbehandling for Hallagerbakken borettslag</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -18,8 +18,10 @@
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js"></script>
         <script src="js/ng/app.js"></script>
+        <script src="js/ng/case/caseModule.js"></script>
         <script src="js/ng/login/login.js"></script>
         
+
         <script type="text/javascript">
             require.config({
                 baseUrl: 'js',
@@ -33,22 +35,47 @@
             // Use a button to handle authentication the first time.
             function handleClientLoad() {
                 console.log('Client loaded.');
-//                require([
-//                    'jquery',
-//                    'text!../google_drive_settings.json',
-//                    'text!../users.json'
-//                ],
-//                function ($, settings, usersJson) {
-//                    var cfg = $.parseJSON(settings),
-//                        users = $.parseJSON(usersJson).users;
-//                    gapi.client.setApiKey(cfg['apiKey']);
-//                    this.gapi.client.load('drive', 'v2', function () {
-//                        window.setTimeout(
-//                            function () {
-//                                startApp(cfg, users, gapi);
-//                            }, 1);
-//                    });
-//                });
+                var gapi = this.gapi;
+                loadConfig()
+                    .done(function(conf) {
+                        gapi.client.setApiKey(conf.cfg['apiKey']);
+                        loadGoogleApis(gapi)
+                            .then(function() {
+                                startAngularApp(conf, gapi);
+                            });
+                });
+            };
+            
+            function loadConfig() {
+                var deferred = $.Deferred();
+
+                require([
+                    'text!../google_drive_settings.json',
+                    'text!../users.json'
+                ],
+                function (settings, usersJson) {
+                    var conf  = {};
+                    conf.cfg = $.parseJSON(settings);
+                    conf.users = $.parseJSON(usersJson).users;
+                    
+                    deferred.resolve(conf);
+                });
+                
+                return deferred.promise();
+            };
+            
+            function loadGoogleApis(gapi) {             
+                return gapi.client.load('drive', 'v2');
+            };
+            
+            function startAngularApp(conf, gapi) {
+                angular.module('app', ['login', 'case'])
+                    .value('conf', conf)
+                    .value('gapi', gapi);
+                
+                angular.element(document).ready(function() {
+                    angular.bootstrap(document, ['app']);
+                });
             };
            
             function startApp (cfg, users, gapi) {
@@ -74,8 +101,7 @@
     </head>
     <body role="document">
         <div class="container" role="main">
-            <div id="content"></div>
-            <div id="appContainer"></div>
+            <case-list ng-controller="caseListController as cl"></case-list>
             <login-button ng-controller="loginController"></login-button>
         </div>
     </body>

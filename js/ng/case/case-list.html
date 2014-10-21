@@ -1,0 +1,13 @@
+<button ng-click="cl.updateCases()">Update cases</button>
+<div class="table-responsive" ng-show="loggedIn" ng-init="cl.updateCases()">
+    <table class="table table-striped table-condensed">
+        <tr data-id="{{case.id}}" ng-repeat="case in cl.data.cases">
+            <td class="caseTitle"><a href="javascript:void(0)" class="edit-list-item">{{case.title}}</a></td>
+            <td>{{case.status}}</td>
+            <td>{{case.owners[0].displayName}}</td>
+            <td class="rowButtons">
+                <a href="{{case.alternateLink}}" target="_blank">[Åpne mappe]</a>
+            </td>
+        </tr>
+    </table>
+</div>
