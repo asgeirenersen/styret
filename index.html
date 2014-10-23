@@ -17,6 +17,7 @@
         
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js"></script>
+        <script src="js/angular-ui-router.min.js"></script>
         <script src="js/ng/app.js"></script>
         <script src="js/ng/case/caseModule.js"></script>
         <script src="js/ng/login/login.js"></script>
@@ -69,9 +70,50 @@
             };
             
             function startAngularApp(conf, gapi) {
-                angular.module('app', ['login', 'case'])
+                var app = angular.module('app', ['login', 'case', 'ui.router'])
                     .value('conf', conf)
                     .value('gapi', gapi);
+                
+                app.config(function($stateProvider, $urlRouterProvider) {
+                //
+                // For any unmatched url, redirect to /state1
+                $urlRouterProvider.otherwise("/cases");
+                //
+                // Now set up the states
+                $stateProvider
+                  .state('caseList', {
+                    url: "/cases",
+                    templateUrl: "js/ng/case/case-list-main.html"
+                  })
+                  .state('caseList.open', {
+                    url: "/cases/filter/open",
+                    templateUrl: "js/ng/case/case-list-main.html",
+                    controller: function() {
+                      this.cl.statusFilter = 'open';
+                    }
+                  })
+                  .state('caseList.closed', {
+                    url: "/cases/filter/closed",
+                    templateUrl: "js/ng/case/case-list-main.html",
+                    controller: function() {
+                      this.cl.statusFilter = 'closed';
+                    }
+                  })
+                  .state('caseList.possible', {
+                    url: "/cases/filter/possible",
+                    templateUrl: "js/ng/case/case-list-main.html",
+                    controller: function() {
+                      this.cl.statusFilter = 'possible';
+                    }
+                  })
+                  .state('caseNew', {
+                    url: "/cases/new",
+                    templateUrl: "js/ng/case/case-new.html",
+                    controller: function() {
+                      this.users = conf.users;
+                    }
+                  });
+              });
                 
                 angular.element(document).ready(function() {
                     angular.bootstrap(document, ['app']);
@@ -101,8 +143,9 @@
     </head>
     <body role="document">
         <div id="main" class="container" role="main">
-            <h1 class="h4">Saksliste</h1>
-            <case-list ng-controller="caseListController as cl"></case-list>
+            
+            <div ui-view></div>
+            
             <login-button ng-controller="loginController"></login-button>
         </div>
     </body>

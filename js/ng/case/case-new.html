@@ -1,0 +1,29 @@
+<div>
+    <a ui-sref="caseList">X</a>
+    <h2>Rediger sak</h2>
+    <form name="newCase" role="form">
+        <div class="form-group">
+            <label class="wrapping">Tittel
+                <input type="text" name="title" class="form-control">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Status<br>
+                <label class="radio-inline"><input type="radio" name="status" value="open"> Åpen</label>
+                <label class="radio-inline"><input type="radio" name="status" value="closed"> Lukket</label>
+                <label class="radio-inline"><input type="radio" name="status" value="possible"> Kanskje</label>
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Sakseier<br>
+                <select name="caseOwner">
+                    <option value="{{user.email}}" ng-repeat="user in users">{{user.name}}</option>
+                </select>
+            </label>
+        </div>
+        <div>
+            <button type="button" class="btn btn-sm btn-primary btn-submit">Lagre</button>
+            <button type="button" class="btn btn-sm btn-default btn-cancel">Avbryt</button>
+        </div>
+    </form>
+</div>
